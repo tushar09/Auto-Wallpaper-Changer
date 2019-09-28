@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".activity.HomeActivity"
+        tools:showIn="@layout/activity_home">
+
+        <GridView
+            android:verticalSpacing="0dp"
+            android:horizontalSpacing="0dp"
+            android:stretchMode="columnWidth"
+            android:numColumns="2"
+            android:id="@+id/gv_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </GridView>
+
+        <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/ll_loading_holder"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_20sdp">
+            <TextView
+                android:textColor="@color/white"
+                android:text="@string/loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>
