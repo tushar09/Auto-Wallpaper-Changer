@@ -68,7 +68,7 @@ public class HomeAdapter extends BaseAdapter{
         view.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                //HomeActivity.ha.downloadPicture(dto.get(i).getUrls().getRegular(), dto.get(i).getId(), dto.get(i).getUrls().getFull());
+                HomeActivity.ha.downloadPicture(dto.get(i).getLargeImageURL(), dto.get(i).getId() + "", dto.get(i).getLargeImageURL());
             }
         });
 
