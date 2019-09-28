@@ -2,6 +2,7 @@ package club.tushar.hdwallpaper.adapter;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,10 @@ import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
 public class HomeAdapter extends BaseAdapter{
 
     private Context context;
-    private List<HomeResponseDto> dto;
+    private List<HomeResponseDto.Hits> dto;
     private int count = 1;
 
-    public HomeAdapter(Context context, List<HomeResponseDto> dto){
+    public HomeAdapter(Context context, List<HomeResponseDto.Hits> dto){
         this.context = context;
         this.dto = dto;
     }
@@ -58,14 +59,11 @@ public class HomeAdapter extends BaseAdapter{
             holder = (Holder) view.getTag();
         }
 
-        holder.binding.tvDownload.setText(dto.get(i).getHits().get(i).getLikes() + "");
+        holder.binding.tvDownload.setText(dto.get(i).getLikes() + "");
         //Picasso.get().load(dto.get(i).getUrl()).into(holder.binding.ivPic);
-        holder.binding.tvAuthor.setText("by " + dto.get(i).getHits().get(i).getUser());
-        Glide.with(context).load(dto.get(i).getHits().get(i).getWebformatURL()).into(holder.binding.ivPic);
-
-        if(i == dto.size() - 12){
-            HomeActivity.ha.loadMore(++count);
-        }
+        holder.binding.tvAuthor.setText("by " + dto.get(i).getUser());
+        Glide.with(context).load(dto.get(i).getWebformatURL()).into(holder.binding.ivPic);
+        //Log.e("url", dto.get(i).getWebformatURL());
 
         view.setOnClickListener(new View.OnClickListener(){
             @Override

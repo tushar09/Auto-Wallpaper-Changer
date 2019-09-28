@@ -73,7 +73,7 @@ public class HomeActivity extends AppCompatActivity{
 
     private HomeAdapter adapter;
 
-    List<HomeResponseDto> dtos;
+    List<HomeResponseDto.Hits> dtos;
 
     private String id;
 
@@ -97,17 +97,19 @@ public class HomeActivity extends AppCompatActivity{
 
         myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
 
-        //Constants.getApiService().getHome(1, 50, Constants.order_by).enqueue(new Callback<List<HomeResponseDto>>(){
-        Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
+        String url = Constants.BASE_URL + "&image_type=all&per_page=100";
+        Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
+        //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
         //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){
             @Override
-            public void onResponse(Call<List<HomeResponseDto>> call, Response<List<HomeResponseDto>> response){
-                dtos.addAll(response.body());
+            public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
+                dtos.addAll(response.body().getHits());
+                Log.e("dtos", dtos.size() + "");
                 adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<List<HomeResponseDto>> call, Throwable t){
+            public void onFailure(Call<HomeResponseDto> call, Throwable t){
 
             }
         });
@@ -276,21 +278,21 @@ public class HomeActivity extends AppCompatActivity{
 
 
     public void loadMore(int page){
-        binding.container.llLoadingHolder.setVisibility(View.VISIBLE);
-        //Constants.getApiService().getHome(page, 50, Constants.order_by).enqueue(new Callback<List<HomeResponseDto>>(){
-        Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
-            @Override
-            public void onResponse(Call<List<HomeResponseDto>> call, Response<List<HomeResponseDto>> response){
-                dtos.addAll(response.body());
-                adapter.notifyDataSetChanged();
-                binding.container.llLoadingHolder.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<List<HomeResponseDto>> call, Throwable t){
-                binding.container.llLoadingHolder.setVisibility(View.GONE);
-            }
-        });
+//        binding.container.llLoadingHolder.setVisibility(View.VISIBLE);
+//        //Constants.getApiService().getHome(page, 50, Constants.order_by).enqueue(new Callback<List<HomeResponseDto>>(){
+//        Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
+//            @Override
+//            public void onResponse(Call<List<HomeResponseDto>> call, Response<List<HomeResponseDto>> response){
+//                dtos.addAll(response.body().);
+//                adapter.notifyDataSetChanged();
+//                binding.container.llLoadingHolder.setVisibility(View.GONE);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<HomeResponseDto>> call, Throwable t){
+//                binding.container.llLoadingHolder.setVisibility(View.GONE);
+//            }
+//        });
 
 
     }

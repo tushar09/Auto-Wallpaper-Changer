@@ -12,8 +12,8 @@ import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 public interface ApiServices{
-    @GET("photos")
-    Call<List<HomeResponseDto>> getHome(@Query("page") int page, @Query("per_page") int per_page, @Query("order_by") String order_by);
+    @GET()
+    Call<HomeResponseDto> getHome(@Url String Url);
 
     @GET("photos/{id}/download")
     Call<DownloadImage> getDownloadLocation(@Path("id") String id);
