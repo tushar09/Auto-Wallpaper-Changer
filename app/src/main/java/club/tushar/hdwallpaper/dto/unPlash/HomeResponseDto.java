@@ -2,396 +2,234 @@ package club.tushar.hdwallpaper.dto.unPlash;
 
 import java.util.List;
 
-public class HomeResponseDto{
+public class HomeResponseDto {
 
-    private User user;
-    private List<String> current_user_collections;
-    private boolean liked_by_user;
-    private int likes;
-    private boolean sponsored;
-    private List<String> categories;
-    private Links links;
-    private Urls urls;
-    private String color;
-    private int height;
-    private int width;
-    private String updated_at;
-    private String created_at;
-    private String id;
+    private int total;
+    private List<Hits> hits;
+    private int totalHits;
 
-    public User getUser(){
-        return user;
+    public int getTotal() {
+        return total;
     }
 
-    public void setUser(User user){
-        this.user = user;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
-    public List<String> getCurrent_user_collections(){
-        return current_user_collections;
+    public List<Hits> getHits() {
+        return hits;
     }
 
-    public void setCurrent_user_collections(List<String> current_user_collections){
-        this.current_user_collections = current_user_collections;
+    public void setHits(List<Hits> hits) {
+        this.hits = hits;
     }
 
-    public boolean getLiked_by_user(){
-        return liked_by_user;
+    public int getTotalHits() {
+        return totalHits;
     }
 
-    public void setLiked_by_user(boolean liked_by_user){
-        this.liked_by_user = liked_by_user;
+    public void setTotalHits(int totalHits) {
+        this.totalHits = totalHits;
     }
 
-    public int getLikes(){
-        return likes;
-    }
+    public static class Hits {
+        private String previewURL;
+        private String userImageURL;
+        private int previewWidth;
+        private int imageSize;
+        private int favorites;
+        private String user;
+        private int downloads;
+        private String tags;
+        private int previewHeight;
+        private String type;
+        private String webformatURL;
+        private int imageHeight;
+        private String pageURL;
+        private int comments;
+        private int views;
+        private int user_id;
+        private int id;
+        private int imageWidth;
+        private int likes;
+        private int webformatWidth;
+        private int webformatHeight;
+        private String largeImageURL;
 
-    public void setLikes(int likes){
-        this.likes = likes;
-    }
-
-    public boolean getSponsored(){
-        return sponsored;
-    }
-
-    public void setSponsored(boolean sponsored){
-        this.sponsored = sponsored;
-    }
-
-    public List<String> getCategories(){
-        return categories;
-    }
-
-    public void setCategories(List<String> categories){
-        this.categories = categories;
-    }
-
-    public Links getLinks(){
-        return links;
-    }
-
-    public void setLinks(Links links){
-        this.links = links;
-    }
-
-    public Urls getUrls(){
-        return urls;
-    }
-
-    public void setUrls(Urls urls){
-        this.urls = urls;
-    }
-
-    public String getColor(){
-        return color;
-    }
-
-    public void setColor(String color){
-        this.color = color;
-    }
-
-    public int getHeight(){
-        return height;
-    }
-
-    public void setHeight(int height){
-        this.height = height;
-    }
-
-    public int getWidth(){
-        return width;
-    }
-
-    public void setWidth(int width){
-        this.width = width;
-    }
-
-    public String getUpdated_at(){
-        return updated_at;
-    }
-
-    public void setUpdated_at(String updated_at){
-        this.updated_at = updated_at;
-    }
-
-    public String getCreated_at(){
-        return created_at;
-    }
-
-    public void setCreated_at(String created_at){
-        this.created_at = created_at;
-    }
-
-    public String getId(){
-        return id;
-    }
-
-    public void setId(String id){
-        this.id = id;
-    }
-
-    public static class User{
-        private int total_photos;
-        private int total_likes;
-        private int total_collections;
-        private String instagram_username;
-        private Profile_image profile_image;
-        private Links links;
-        private String location;
-        private String bio;
-        private String portfolio_url;
-        private String twitter_username;
-        private String last_name;
-        private String first_name;
-        private String name;
-        private String username;
-        private String updated_at;
-        private String id;
-
-        public int getTotal_photos(){
-            return total_photos;
+        public String getPreviewURL() {
+            return previewURL;
         }
 
-        public void setTotal_photos(int total_photos){
-            this.total_photos = total_photos;
+        public void setPreviewURL(String previewURL) {
+            this.previewURL = previewURL;
         }
 
-        public int getTotal_likes(){
-            return total_likes;
+        public String getUserImageURL() {
+            return userImageURL;
         }
 
-        public void setTotal_likes(int total_likes){
-            this.total_likes = total_likes;
+        public void setUserImageURL(String userImageURL) {
+            this.userImageURL = userImageURL;
         }
 
-        public int getTotal_collections(){
-            return total_collections;
+        public int getPreviewWidth() {
+            return previewWidth;
         }
 
-        public void setTotal_collections(int total_collections){
-            this.total_collections = total_collections;
+        public void setPreviewWidth(int previewWidth) {
+            this.previewWidth = previewWidth;
         }
 
-        public String getInstagram_username(){
-            return instagram_username;
+        public int getImageSize() {
+            return imageSize;
         }
 
-        public void setInstagram_username(String instagram_username){
-            this.instagram_username = instagram_username;
+        public void setImageSize(int imageSize) {
+            this.imageSize = imageSize;
         }
 
-        public Profile_image getProfile_image(){
-            return profile_image;
+        public int getFavorites() {
+            return favorites;
         }
 
-        public void setProfile_image(Profile_image profile_image){
-            this.profile_image = profile_image;
+        public void setFavorites(int favorites) {
+            this.favorites = favorites;
         }
 
-        public Links getLinks(){
-            return links;
+        public String getUser() {
+            return user;
         }
 
-        public void setLinks(Links links){
-            this.links = links;
+        public void setUser(String user) {
+            this.user = user;
         }
 
-        public String getLocation(){
-            return location;
+        public int getDownloads() {
+            return downloads;
         }
 
-        public void setLocation(String location){
-            this.location = location;
+        public void setDownloads(int downloads) {
+            this.downloads = downloads;
         }
 
-        public String getBio(){
-            return bio;
+        public String getTags() {
+            return tags;
         }
 
-        public void setBio(String bio){
-            this.bio = bio;
+        public void setTags(String tags) {
+            this.tags = tags;
         }
 
-        public String getPortfolio_url(){
-            return portfolio_url;
+        public int getPreviewHeight() {
+            return previewHeight;
         }
 
-        public void setPortfolio_url(String portfolio_url){
-            this.portfolio_url = portfolio_url;
+        public void setPreviewHeight(int previewHeight) {
+            this.previewHeight = previewHeight;
         }
 
-        public String getTwitter_username(){
-            return twitter_username;
+        public String getType() {
+            return type;
         }
 
-        public void setTwitter_username(String twitter_username){
-            this.twitter_username = twitter_username;
+        public void setType(String type) {
+            this.type = type;
         }
 
-        public String getLast_name(){
-            return last_name;
+        public String getWebformatURL() {
+            return webformatURL;
         }
 
-        public void setLast_name(String last_name){
-            this.last_name = last_name;
+        public void setWebformatURL(String webformatURL) {
+            this.webformatURL = webformatURL;
         }
 
-        public String getFirst_name(){
-            return first_name;
+        public int getImageHeight() {
+            return imageHeight;
         }
 
-        public void setFirst_name(String first_name){
-            this.first_name = first_name;
+        public void setImageHeight(int imageHeight) {
+            this.imageHeight = imageHeight;
         }
 
-        public String getName(){
-            return name;
+        public String getPageURL() {
+            return pageURL;
         }
 
-        public void setName(String name){
-            this.name = name;
+        public void setPageURL(String pageURL) {
+            this.pageURL = pageURL;
         }
 
-        public String getUsername(){
-            return username;
+        public int getComments() {
+            return comments;
         }
 
-        public void setUsername(String username){
-            this.username = username;
+        public void setComments(int comments) {
+            this.comments = comments;
         }
 
-        public String getUpdated_at(){
-            return updated_at;
+        public int getViews() {
+            return views;
         }
 
-        public void setUpdated_at(String updated_at){
-            this.updated_at = updated_at;
+        public void setViews(int views) {
+            this.views = views;
         }
 
-        public String getId(){
+        public int getUser_id() {
+            return user_id;
+        }
+
+        public void setUser_id(int user_id) {
+            this.user_id = user_id;
+        }
+
+        public int getId() {
             return id;
         }
 
-        public void setId(String id){
+        public void setId(int id) {
             this.id = id;
         }
-    }
 
-    public static class Profile_image{
-        private String large;
-        private String medium;
-        private String small;
-
-        public String getLarge(){
-            return large;
+        public int getImageWidth() {
+            return imageWidth;
         }
 
-        public void setLarge(String large){
-            this.large = large;
+        public void setImageWidth(int imageWidth) {
+            this.imageWidth = imageWidth;
         }
 
-        public String getMedium(){
-            return medium;
+        public int getLikes() {
+            return likes;
         }
 
-        public void setMedium(String medium){
-            this.medium = medium;
+        public void setLikes(int likes) {
+            this.likes = likes;
         }
 
-        public String getSmall(){
-            return small;
+        public int getWebformatWidth() {
+            return webformatWidth;
         }
 
-        public void setSmall(String small){
-            this.small = small;
-        }
-    }
-
-    public static class Links{
-        private String download_location;
-        private String download;
-        private String html;
-        private String self;
-
-        public String getDownload_location(){
-            return download_location;
+        public void setWebformatWidth(int webformatWidth) {
+            this.webformatWidth = webformatWidth;
         }
 
-        public void setDownload_location(String download_location){
-            this.download_location = download_location;
+        public int getWebformatHeight() {
+            return webformatHeight;
         }
 
-        public String getDownload(){
-            return download;
+        public void setWebformatHeight(int webformatHeight) {
+            this.webformatHeight = webformatHeight;
         }
 
-        public void setDownload(String download){
-            this.download = download;
+        public String getLargeImageURL() {
+            return largeImageURL;
         }
 
-        public String getHtml(){
-            return html;
-        }
-
-        public void setHtml(String html){
-            this.html = html;
-        }
-
-        public String getSelf(){
-            return self;
-        }
-
-        public void setSelf(String self){
-            this.self = self;
-        }
-    }
-
-    public static class Urls{
-        private String thumb;
-        private String small;
-        private String regular;
-        private String full;
-        private String raw;
-
-        public String getThumb(){
-            return thumb;
-        }
-
-        public void setThumb(String thumb){
-            this.thumb = thumb;
-        }
-
-        public String getSmall(){
-            return small;
-        }
-
-        public void setSmall(String small){
-            this.small = small;
-        }
-
-        public String getRegular(){
-            return regular;
-        }
-
-        public void setRegular(String regular){
-            this.regular = regular;
-        }
-
-        public String getFull(){
-            return full;
-        }
-
-        public void setFull(String full){
-            this.full = full;
-        }
-
-        public String getRaw(){
-            return raw;
-        }
-
-        public void setRaw(String raw){
-            this.raw = raw;
+        public void setLargeImageURL(String largeImageURL) {
+            this.largeImageURL = largeImageURL;
         }
     }
 }

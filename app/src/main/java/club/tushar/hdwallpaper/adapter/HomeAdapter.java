@@ -58,10 +58,10 @@ public class HomeAdapter extends BaseAdapter{
             holder = (Holder) view.getTag();
         }
 
-        holder.binding.tvDownload.setText(dto.get(i).getLikes() + "");
+        holder.binding.tvDownload.setText(dto.get(i).getHits().get(i).getLikes() + "");
         //Picasso.get().load(dto.get(i).getUrl()).into(holder.binding.ivPic);
-        holder.binding.tvAuthor.setText("by " + dto.get(i).getUser().getFirst_name());
-        Glide.with(context).load(dto.get(i).getUrls().getSmall()).into(holder.binding.ivPic);
+        holder.binding.tvAuthor.setText("by " + dto.get(i).getHits().get(i).getUser());
+        Glide.with(context).load(dto.get(i).getHits().get(i).getWebformatURL()).into(holder.binding.ivPic);
 
         if(i == dto.size() - 12){
             HomeActivity.ha.loadMore(++count);
@@ -70,7 +70,7 @@ public class HomeAdapter extends BaseAdapter{
         view.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                HomeActivity.ha.downloadPicture(dto.get(i).getUrls().getRegular(), dto.get(i).getId(), dto.get(i).getUrls().getFull());
+                //HomeActivity.ha.downloadPicture(dto.get(i).getUrls().getRegular(), dto.get(i).getId(), dto.get(i).getUrls().getFull());
             }
         });
 
