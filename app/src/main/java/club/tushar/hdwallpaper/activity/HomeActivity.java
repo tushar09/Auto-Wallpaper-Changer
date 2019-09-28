@@ -97,22 +97,7 @@ public class HomeActivity extends AppCompatActivity{
 
         myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
 
-        String url = Constants.BASE_URL + "&image_type=all&per_page=100";
-        Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
-        //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
-        //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){
-            @Override
-            public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
-                dtos.addAll(response.body().getHits());
-                Log.e("dtos", dtos.size() + "");
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailure(Call<HomeResponseDto> call, Throwable t){
-
-            }
-        });
+        loadMoreByPage(1);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -277,23 +262,23 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 
-    public void loadMore(int page){
-//        binding.container.llLoadingHolder.setVisibility(View.VISIBLE);
-//        //Constants.getApiService().getHome(page, 50, Constants.order_by).enqueue(new Callback<List<HomeResponseDto>>(){
-//        Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
-//            @Override
-//            public void onResponse(Call<List<HomeResponseDto>> call, Response<List<HomeResponseDto>> response){
-//                dtos.addAll(response.body().);
-//                adapter.notifyDataSetChanged();
-//                binding.container.llLoadingHolder.setVisibility(View.GONE);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<HomeResponseDto>> call, Throwable t){
-//                binding.container.llLoadingHolder.setVisibility(View.GONE);
-//            }
-//        });
+    public void loadMoreByPage(int page){
 
+        String url = Constants.BASE_URL + "&image_type=all&per_page=100&page=" + page;
+        Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
+            //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
+            //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){
+            @Override
+            public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
+                dtos.addAll(response.body().getHits());
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<HomeResponseDto> call, Throwable t){
+
+            }
+        });
 
     }
 
