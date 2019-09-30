@@ -4,6 +4,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:background="#fff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -11,6 +12,7 @@
         tools:showIn="@layout/activity_home">
 
         <GridView
+            android:nestedScrollingEnabled="true"
             android:verticalSpacing="0dp"
             android:horizontalSpacing="0dp"
             android:stretchMode="columnWidth"
