@@ -6,7 +6,10 @@ import android.app.WallpaperManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.media.RemoteController;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -84,6 +87,12 @@ public class HomeActivity extends AppCompatActivity{
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        binding.tvTitile.setTextColor(Color.parseColor("#800CDD"));
+        Shader textShader=new LinearGradient(0, 0, binding.tvTitile.getPaint().measureText(getString(R.string.app_name)), binding.tvTitile.getTextSize(),
+                new int[]{Color.parseColor("#800CDD"), Color.parseColor("#3BA3F2")},
+                new float[]{0, 1}, Shader.TileMode.CLAMP);
+        binding.tvTitile.getPaint().setShader(textShader);
 
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
