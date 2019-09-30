@@ -11,17 +11,13 @@
         tools:context=".activity.HomeActivity"
         tools:showIn="@layout/activity_home">
 
-        <GridView
-            android:nestedScrollingEnabled="true"
-            android:verticalSpacing="0dp"
-            android:horizontalSpacing="0dp"
-            android:stretchMode="columnWidth"
-            android:numColumns="2"
-            android:id="@+id/gv_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-        </GridView>
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginLeft="@dimen/_6sdp"
+            android:layout_marginRight="@dimen/_6sdp"
+            android:id="@+id/rv_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
         <LinearLayout
             android:visibility="gone"

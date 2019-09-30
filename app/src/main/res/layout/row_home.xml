@@ -3,12 +3,13 @@
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center">
         <android.support.v7.widget.CardView
-            app:cardUseCompatPadding="true"
+            android:layout_margin="@dimen/_6sdp"
             app:cardCornerRadius="@dimen/_5sdp"
-            android:layout_width="@dimen/_140sdp"
+            app:cardPreventCornerOverlap="true"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_190sdp">
             <RelativeLayout
                 android:layout_width="match_parent"

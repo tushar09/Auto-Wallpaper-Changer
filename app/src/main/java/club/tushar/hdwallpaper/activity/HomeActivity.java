@@ -19,6 +19,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +36,7 @@ import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Picasso;
 
+import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
 import io.fabric.sdk.android.Fabric;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,11 +77,12 @@ public class HomeActivity extends AppCompatActivity{
     private List<MainModelResponseDto> mainModelResponseDtos;
     private List<String> url;
 
-    private HomeAdapter adapter;
+    private HomeAdapterNew adapterNew;
 
     List<HomeResponseDto.Hits> dtos;
 
     private String id;
+    private RecyclerView.LayoutManager gridLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -94,6 +98,9 @@ public class HomeActivity extends AppCompatActivity{
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         binding.tvTitile.getPaint().setShader(textShader);
 
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        binding.container.rvList.setLayoutManager(gridLayoutManager);
+
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
         pd.setMessage(getResources().getString(R.string.appling_picture));
@@ -101,8 +108,10 @@ public class HomeActivity extends AppCompatActivity{
         ha = this;
 
         dtos = new ArrayList<>();
-        adapter = new HomeAdapter(HomeActivity.this, dtos);
-        binding.container.gvList.setAdapter(adapter);
+
+        adapterNew = new HomeAdapterNew(HomeActivity.this, dtos);
+        binding.container.rvList.setAdapter(adapterNew);
+
 
         myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
 
@@ -280,7 +289,7 @@ public class HomeActivity extends AppCompatActivity{
             @Override
             public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
                 dtos.addAll(response.body().getHits());
-                adapter.notifyDataSetChanged();
+                adapterNew.notifyDataSetChanged();
             }
 
             @Override
