@@ -45,6 +45,7 @@ import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
 import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
 import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
 import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
+import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
 import club.tushar.hdwallpaper.utils.Constants;
 import retrofit2.Call;
@@ -68,7 +69,7 @@ public class HomeActivity extends AppCompatActivity{
 
     private HomeAdapterNew adapterNew;
 
-    List<HomeResponseDto.Hits> dtos;
+    //List<HomeResponseDto.Hits> dtos;
 
     private String id;
     private RecyclerView.LayoutManager gridLayoutManager;
@@ -95,10 +96,7 @@ public class HomeActivity extends AppCompatActivity{
 
         ha = this;
 
-        dtos = new ArrayList<>();
-
-        adapterNew = new HomeAdapterNew(HomeActivity.this, dtos);
-        binding.container.rvList.setAdapter(adapterNew);
+        //dtos = new ArrayList<>();
 
 
         myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
@@ -115,7 +113,7 @@ public class HomeActivity extends AppCompatActivity{
         });
     }
 
-    public void downloadPicture(final String regularUrl, final String id, final String fullUrl){
+    public void downloadPicture(final String regularUrl){
 
         this.id = id;
 
@@ -145,8 +143,8 @@ public class HomeActivity extends AppCompatActivity{
                             .progress(false, 100, true)
                             .icon(ContextCompat.getDrawable(HomeActivity.this, R.mipmap.ic_launcher))
                             .show();
-                    new DownloadBitMap().execute(new URL(fullUrl), null, null);
-                    Log.e("regularUrl", fullUrl);
+                    new DownloadBitMap().execute(new URL(regularUrl), null, null);
+                    //Log.e("regularUrl", fullUrl);
                 }catch(MalformedURLException e){
                     e.printStackTrace();
                 }
@@ -173,6 +171,11 @@ public class HomeActivity extends AppCompatActivity{
             Bitmap myBitmap = null;
             try{
                 url = urls[0];
+                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/OnePlus-7-Pro_gray.jpg?alt=media&token=a7b0f0f6-32b0-4647-b5c4-83f6452716f3");
+                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/18-183857_preview-creative-wallpapers-background-creative-high-resolution-design.jpg?alt=media&token=ac0d9b42-1374-4b79-a2e9-fb000ad7ee69");
+                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/tree-276014.jpg?alt=media&token=557aa271-1173-4e46-be68-394f0ac0eaff");
+                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/Material-Wallpaper-23-2664x2664.png?alt=media&token=4382dd11-2513-4c36-91c0-41338c0d2770");
+                //563492ad6f917000010000010676d489db5b43738c2e002114eaa93f
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestProperty("Accept-Encoding", "identity");
@@ -270,18 +273,31 @@ public class HomeActivity extends AppCompatActivity{
 
     public void loadMoreByPage(int page){
 
-        String url = Constants.BASE_URL + "&image_type=photo&q=nature&per_page=100&page=" + page;
-        Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
-            //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
-            //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){
+        String url = Constants.BASE_URL + "&image_type=photo&q=wallpaper&per_page=100&page=" + page;
+//        Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
+//            //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
+//            //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){
+//            @Override
+//            public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
+//                dtos.addAll(response.body().getHits());
+//                adapterNew.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<HomeResponseDto> call, Throwable t){
+//
+//            }
+//        });
+
+        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f","wallpaper").enqueue(new Callback<PixelsResponse>() {
             @Override
-            public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
-                dtos.addAll(response.body().getHits());
-                adapterNew.notifyDataSetChanged();
+            public void onResponse(Call<PixelsResponse> call, Response<PixelsResponse> response) {
+                adapterNew = new HomeAdapterNew(HomeActivity.this, response.body());
+                binding.container.rvList.setAdapter(adapterNew);
             }
 
             @Override
-            public void onFailure(Call<HomeResponseDto> call, Throwable t){
+            public void onFailure(Call<PixelsResponse> call, Throwable t) {
 
             }
         });

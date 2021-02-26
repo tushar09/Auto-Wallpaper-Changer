@@ -4,6 +4,9 @@ import android.content.Context;
 import androidx.databinding.DataBindingUtil;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +18,16 @@ import java.util.List;
 import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.activity.HomeActivity;
 import club.tushar.hdwallpaper.databinding.RowHomeBinding;
+import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
 
 public class HomeAdapterNew extends RecyclerView.Adapter {
 
     private Context context;
-    private List<HomeResponseDto.Hits> dto;
+    private PixelsResponse dto;
     private int count = 1;
 
-    public HomeAdapterNew(Context context, List<HomeResponseDto.Hits> dto) {
+    public HomeAdapterNew(Context context, PixelsResponse dto) {
         this.context = context;
         this.dto = dto;
         this.count = count;
@@ -40,16 +44,24 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, final int i) {
         Holder holder = (Holder) h;
-        holder.binding.tvDownload.setText(dto.get(i).getLikes() + "");
+        //holder.binding.tvDownload.setText(dto.get(i).getPhotos().get(i).get.getLikes() + "");
         //Picasso.get().load(dto.get(i).getUrl()).into(holder.binding.ivPic);
-        holder.binding.tvAuthor.setText("by " + dto.get(i).getUser());
-        Glide.with(context).load(dto.get(i).getWebformatURL()).into(holder.binding.ivPic);
+        holder.binding.tvAuthor.setText("by " + dto.getPhotos().get(i).getPhotographer());
+        try{
+            holder.binding.ll.setBackgroundColor(Color.parseColor(dto.getPhotos().get(i).getAvgColor()));
+        }catch (Exception e){
+            Log.e("coll,or", dto.getPhotos().get(i).getAvgColor());
+        }
+
+        Glide.with(context).load(dto.getPhotos().get(i).getSrc().getLarge()).into(holder.binding.ivPic);
+
         //Log.e("url", dto.get(i).getWebformatURL());
 
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                HomeActivity.ha.downloadPicture(dto.get(i).getLargeImageURL(), dto.get(i).getId() + "", dto.get(i).getLargeImageURL());
+                Log.e("asdf", dto.getPhotos().get(i).getSrc().getOriginal());
+                HomeActivity.ha.downloadPicture(dto.getPhotos().get(i).getSrc().getOriginal());
             }
         });
 
@@ -57,7 +69,7 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return dto.size();
+        return dto.getPhotos().size();
     }
 
     private class Holder extends RecyclerView.ViewHolder{

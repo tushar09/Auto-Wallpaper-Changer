@@ -11,7 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Constants{
 
-    public static String BASE_URL = "https://pixabay.com/api/?key=13776425-388ae79a88daef057c1ae2c61";
+    //public static String BASE_URL = "https://pixabay.com/api/?key=13776425-388ae79a88daef057c1ae2c61";
+    public static String BASE_URL = "https://api.pexels.com/v1/";
 
     public static String orientation = "landscape";
 

@@ -20,6 +20,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
                 <LinearLayout
+                    android:id="@+id/ll"
                     android:gravity="center|start"
                     android:background="@color/transperent_black"
                     android:layout_alignParentBottom="true"
