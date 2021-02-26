@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HD Wallpaper</string>
+    <string name="app_name">Auto Wallpaper Change</string>
     <string name="action_settings">Settings</string>
     <string name="download_picture">Set Wallpaper</string>
     <string name="download_picture_message">Do you want to download this and apply this picture as home wallpaper</string>

@@ -3,25 +3,24 @@ package club.tushar.hdwallpaper.activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
-import android.graphics.Rect;
 import android.graphics.Shader;
-import android.media.RemoteController;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,27 +29,18 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.crashlytics.android.Crashlytics;
-import com.squareup.picasso.Picasso;
-
 import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
-import io.fabric.sdk.android.Fabric;
-import java.io.BufferedInputStream;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import club.tushar.hdwallpaper.R;
-import club.tushar.hdwallpaper.adapter.HomeAdapter;
 import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
 import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
 import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
@@ -60,7 +50,6 @@ import club.tushar.hdwallpaper.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.HTTP;
 
 public class HomeActivity extends AppCompatActivity{
 
@@ -87,7 +76,6 @@ public class HomeActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -282,7 +270,7 @@ public class HomeActivity extends AppCompatActivity{
 
     public void loadMoreByPage(int page){
 
-        String url = Constants.BASE_URL + "&image_type=all&per_page=100&page=" + page;
+        String url = Constants.BASE_URL + "&image_type=photo&q=nature&per_page=100&page=" + page;
         Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
             //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
             //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){

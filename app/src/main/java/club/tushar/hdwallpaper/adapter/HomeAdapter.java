@@ -1,23 +1,20 @@
 package club.tushar.hdwallpaper.adapter;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
-import android.util.Log;
+import androidx.databinding.DataBindingUtil;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.activity.HomeActivity;
 import club.tushar.hdwallpaper.databinding.RowHomeBinding;
-import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
 import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
 
 public class HomeAdapter extends BaseAdapter{
