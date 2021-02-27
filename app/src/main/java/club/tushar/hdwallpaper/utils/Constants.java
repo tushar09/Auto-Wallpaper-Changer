@@ -1,5 +1,7 @@
 package club.tushar.hdwallpaper.utils;
 
+import android.content.Context;
+
 import java.util.concurrent.TimeUnit;
 
 import club.tushar.hdwallpaper.services.ApiServices;
@@ -15,6 +17,8 @@ public class Constants{
     public static String BASE_URL = "https://api.pexels.com/v1/";
 
     public static String orientation = "landscape";
+
+    private static SPreferences sPreferences;
 
     public static ApiServices getApiService(){
 
@@ -33,6 +37,13 @@ public class Constants{
                 .build()
                 .create(ApiServices.class);
         return retrofit;
+    }
+
+    public static SPreferences getSharedPreferences(Context context){
+        if(sPreferences == null){
+            sPreferences = new SPreferences(context);
+        }
+        return sPreferences;
     }
 
 }

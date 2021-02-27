@@ -60,8 +60,7 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.e("asdf", dto.getPhotos().get(i).getSrc().getOriginal());
-                HomeActivity.ha.downloadPicture(dto.getPhotos().get(i).getSrc().getOriginal());
+                HomeActivity.ha.downloadPicture(dto.getPhotos().get(i).getSrc().getOriginal(), dto.getPhotos().get(i).getSrc().getLarge2x());
             }
         });
 

@@ -1,9 +1,14 @@
 package club.tushar.hdwallpaper.activity;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 import androidx.databinding.DataBindingUtil;
+
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -28,6 +33,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Toast;
 
 import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
 
@@ -47,6 +53,7 @@ import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
 import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
+import club.tushar.hdwallpaper.services.AlarmReceiver;
 import club.tushar.hdwallpaper.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,10 +76,10 @@ public class HomeActivity extends AppCompatActivity{
 
     private HomeAdapterNew adapterNew;
 
-    //List<HomeResponseDto.Hits> dtos;
-
     private String id;
     private RecyclerView.LayoutManager gridLayoutManager;
+
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -80,6 +87,16 @@ public class HomeActivity extends AppCompatActivity{
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        /* Retrieve a PendingIntent that will perform a broadcast */
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        int interval = 8000;
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 43200000, pendingIntent);
+        //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
 
         binding.tvTitile.setTextColor(Color.parseColor("#800CDD"));
         Shader textShader=new LinearGradient(0, 0, binding.tvTitile.getPaint().measureText(getString(R.string.app_name)), binding.tvTitile.getTextSize(),
@@ -96,9 +113,6 @@ public class HomeActivity extends AppCompatActivity{
 
         ha = this;
 
-        //dtos = new ArrayList<>();
-
-
         myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
 
         loadMoreByPage(1);
@@ -113,7 +127,7 @@ public class HomeActivity extends AppCompatActivity{
         });
     }
 
-    public void downloadPicture(final String regularUrl){
+    public void downloadPicture(final String regularUrl, String large2x){
 
         this.id = id;
 
@@ -123,8 +137,7 @@ public class HomeActivity extends AppCompatActivity{
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(binding.getRoot());
-        Glide.with(this).load(regularUrl).into(binding.ivImage);
-        //Picasso.get().load(regularUrl).into(binding.ivImage);
+        Glide.with(this).load(large2x).into(binding.ivImage);
         binding.btNo.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -171,11 +184,6 @@ public class HomeActivity extends AppCompatActivity{
             Bitmap myBitmap = null;
             try{
                 url = urls[0];
-                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/OnePlus-7-Pro_gray.jpg?alt=media&token=a7b0f0f6-32b0-4647-b5c4-83f6452716f3");
-                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/18-183857_preview-creative-wallpapers-background-creative-high-resolution-design.jpg?alt=media&token=ac0d9b42-1374-4b79-a2e9-fb000ad7ee69");
-                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/tree-276014.jpg?alt=media&token=557aa271-1173-4e46-be68-394f0ac0eaff");
-                //url = new URL("https://firebasestorage.googleapis.com/v0/b/hd-wallpapers-d7c71.appspot.com/o/Material-Wallpaper-23-2664x2664.png?alt=media&token=4382dd11-2513-4c36-91c0-41338c0d2770");
-                //563492ad6f917000010000010676d489db5b43738c2e002114eaa93f
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestProperty("Accept-Encoding", "identity");
@@ -189,13 +197,10 @@ public class HomeActivity extends AppCompatActivity{
                 long total = 0;
                 int count;
 
-                Log.e("file length", fileLength + "");
-
                 ByteArrayOutputStream imageBaos = new ByteArrayOutputStream();
 
                 while((count = input.read(data)) != -1){
                     total += count;
-                    Log.e("length", total + " " + count + "");
                     // publishing the progress....
                     imageBaos.write(data, 0, count);
                     publishProgress((int) (total * 100 / fileLength));
@@ -273,27 +278,12 @@ public class HomeActivity extends AppCompatActivity{
 
     public void loadMoreByPage(int page){
 
-        String url = Constants.BASE_URL + "&image_type=photo&q=wallpaper&per_page=100&page=" + page;
-//        Constants.getApiService().getHome(url).enqueue(new Callback<HomeResponseDto>(){
-//            //Constants.getApiService().getrandomPhoto(30, Constants.orientation).enqueue(new Callback<List<HomeResponseDto>>(){
-//            //Constants.getApiService().searchPhoto("animal", 10).enqueue(new Callback<List<HomeResponseDto>>(){
-//            @Override
-//            public void onResponse(Call<HomeResponseDto> call, Response<HomeResponseDto> response){
-//                dtos.addAll(response.body().getHits());
-//                adapterNew.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<HomeResponseDto> call, Throwable t){
-//
-//            }
-//        });
-
-        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f","wallpaper").enqueue(new Callback<PixelsResponse>() {
+        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f","mobile wallpaper", 1, 80).enqueue(new Callback<PixelsResponse>() {
             @Override
             public void onResponse(Call<PixelsResponse> call, Response<PixelsResponse> response) {
                 adapterNew = new HomeAdapterNew(HomeActivity.this, response.body());
                 binding.container.rvList.setAdapter(adapterNew);
+                Constants.getSharedPreferences(HomeActivity.this).setResponse(response.body());
             }
 
             @Override

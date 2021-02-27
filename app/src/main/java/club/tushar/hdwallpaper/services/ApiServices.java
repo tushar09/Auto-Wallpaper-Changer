@@ -17,7 +17,7 @@ public interface ApiServices{
     Call<HomeResponseDto> getHome(@Url String Url);
 
     @GET("search/")
-    Call<PixelsResponse> getHome2(@Header("Authorization") String token, @Query("query") String q);
+    Call<PixelsResponse> getHome2(@Header("Authorization") String token, @Query("query") String q, @Query("page") int page, @Query("per_page")int perPage);
 
     @GET("photos/{id}/download")
     Call<DownloadImage> getDownloadLocation(@Path("id") String id);
