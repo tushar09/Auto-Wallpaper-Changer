@@ -11,6 +11,15 @@ android {
         versionName "4.4"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation":"$projectDir/schemas".toString(),
+                        "room.incremental":"true",
+                        "room.expandProjection":"true"]
+            }
+        }
     }
     buildTypes {
         release {
@@ -52,4 +61,7 @@ dependencies {
     //custom dialog box
     implementation 'com.yarolegovich:lovely-dialog:1.0.7'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
+
+    implementation "android.arch.persistence.room:runtime:2.3.0-beta02"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 }

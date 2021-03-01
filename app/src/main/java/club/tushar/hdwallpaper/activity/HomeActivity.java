@@ -38,6 +38,8 @@ import android.widget.Toast;
 import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -49,6 +51,8 @@ import java.util.List;
 import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
 import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
+import club.tushar.hdwallpaper.db.AppDatabase;
+import club.tushar.hdwallpaper.db.Wallpapers;
 import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
 import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
@@ -81,6 +85,8 @@ public class HomeActivity extends AppCompatActivity{
 
     private PendingIntent pendingIntent;
 
+    private File directory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -88,13 +94,18 @@ public class HomeActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        directory = getDir("myFiles", Context.MODE_PRIVATE);
+        directory.mkdir();
+
+
         /* Retrieve a PendingIntent that will perform a broadcast */
         Intent alarmIntent = new Intent(this, AlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         int interval = 8000;
+        //int interval = 43200000;
 
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 43200000, pendingIntent);
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
 
@@ -127,9 +138,9 @@ public class HomeActivity extends AppCompatActivity{
         });
     }
 
-    public void downloadPicture(final String regularUrl, String large2x){
+    public void downloadPicture(final String regularUrl, String large2x, int id){
 
-        this.id = id;
+        this.id = id + "";
 
         DialogDetailsBelow24Binding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_details_below_24, null, true);
 
@@ -212,6 +223,23 @@ public class HomeActivity extends AppCompatActivity{
                 imageBaos.close();
                 connection.disconnect();
 
+                File f = new File(directory, id);
+                f.createNewFile();
+
+                //Convert bitmap to byte array
+                Bitmap bitmap = myBitmap;
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                //write the bytes in file
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(bitmapdata);
+                fos.flush();
+
+                Wallpapers wallpapers = new Wallpapers(f.getPath());
+                AppDatabase.getInstance(HomeActivity.this).daoWallpapers().insert(wallpapers);
+
             }catch(MalformedURLException e){
                 e.printStackTrace();
             }catch(IOException e){
@@ -258,20 +286,6 @@ public class HomeActivity extends AppCompatActivity{
 
                 }
             }).start();
-
-            Constants.getApiService().getDownloadLocation(id).enqueue(new Callback<DownloadImage>(){
-                @Override
-                public void onResponse(Call<DownloadImage> call, Response<DownloadImage> response){
-                    //Log.e("regularUrl", response.body());
-                }
-
-                @Override
-                public void onFailure(Call<DownloadImage> call, Throwable t){
-                    Log.e("regularUrl", t.toString());
-                }
-            });
-
-
         }
     }
 

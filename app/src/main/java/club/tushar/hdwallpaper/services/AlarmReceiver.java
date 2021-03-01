@@ -12,6 +12,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -20,6 +22,9 @@ import java.net.URL;
 import java.util.Random;
 
 import club.tushar.hdwallpaper.R;
+import club.tushar.hdwallpaper.activity.HomeActivity;
+import club.tushar.hdwallpaper.db.AppDatabase;
+import club.tushar.hdwallpaper.db.Wallpapers;
 import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.utils.Constants;
@@ -81,6 +86,24 @@ public class AlarmReceiver extends BroadcastReceiver {
                 imageBaos.close();
                 connection.disconnect();
 
+                File f = new File(context.getDir("myFiles", Context.MODE_PRIVATE), pixelsResponse.getPhotos().get(result).getId() + "");
+                f.createNewFile();
+
+                //Convert bitmap to byte array
+                Bitmap bitmap = myBitmap;
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+                byte[] bitmapdata = bos.toByteArray();
+
+                //write the bytes in file
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(bitmapdata);
+                fos.flush();
+
+                Wallpapers wallpapers = new Wallpapers(f.getPath());
+                AppDatabase.getInstance(context).daoWallpapers().insert(wallpapers);
+                Log.e("top", AppDatabase.getInstance(context).daoWallpapers().getNext().getPath());
+                Log.e("path", wallpapers.getPath());
             }catch(MalformedURLException e){
                 e.printStackTrace();
             }catch(IOException e){
@@ -99,16 +122,16 @@ public class AlarmReceiver extends BroadcastReceiver {
         @Override
         protected void onPostExecute(final Bitmap bitmap){
             super.onPostExecute(bitmap);
-            try {
-                myWallpaperManager.setBitmap(bitmap);
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                    myWallpaperManager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK);
-                }
-                Log.e("err", "Finished");
-            } catch (IOException e) {
-                Log.e("err", e.toString());
-                e.printStackTrace();
-            }
+//            try {
+//                myWallpaperManager.setBitmap(bitmap);
+//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+//                    myWallpaperManager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK);
+//                }
+//                Log.e("err", "Finished");
+//            } catch (IOException e) {
+//                Log.e("err", e.toString());
+//                e.printStackTrace();
+//            }
 
         }
     }
