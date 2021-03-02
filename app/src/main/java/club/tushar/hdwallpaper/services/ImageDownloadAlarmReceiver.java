@@ -32,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public class ImageDownloadAlarmReceiver extends BroadcastReceiver {
 
     private Context context;
     private WallpaperManager myWallpaperManager;
@@ -92,7 +92,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 //Convert bitmap to byte array
                 Bitmap bitmap = myBitmap;
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
                 byte[] bitmapdata = bos.toByteArray();
 
                 //write the bytes in file

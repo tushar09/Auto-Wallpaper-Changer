@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
+
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
@@ -20,13 +22,19 @@ import android.os.Bundle;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.transition.MaterialArcMotion;
+import com.google.android.material.transition.MaterialContainerTransform;
+
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
-import android.util.Log;
+import androidx.transition.Transition;
+import androidx.transition.TransitionListenerAdapter;
+import androidx.transition.TransitionManager;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
@@ -45,7 +53,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import club.tushar.hdwallpaper.R;
@@ -53,11 +60,10 @@ import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
 import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
 import club.tushar.hdwallpaper.db.AppDatabase;
 import club.tushar.hdwallpaper.db.Wallpapers;
-import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
 import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
-import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
-import club.tushar.hdwallpaper.services.AlarmReceiver;
+import club.tushar.hdwallpaper.services.ChangeWallPaperAlarmReceiver;
+import club.tushar.hdwallpaper.services.ImageDownloadAlarmReceiver;
 import club.tushar.hdwallpaper.utils.Constants;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -84,6 +90,7 @@ public class HomeActivity extends AppCompatActivity{
     private RecyclerView.LayoutManager gridLayoutManager;
 
     private PendingIntent pendingIntent;
+    private PendingIntent changeWallpaperPendingIntent;
 
     private File directory;
 
@@ -99,14 +106,23 @@ public class HomeActivity extends AppCompatActivity{
 
 
         /* Retrieve a PendingIntent that will perform a broadcast */
-        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        Intent alarmIntent = new Intent(this, ImageDownloadAlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         int interval = 8000;
         //int interval = 43200000;
-
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+
+        /* Retrieve a PendingIntent that will perform a broadcast */
+        Intent changeWallpaperAlarmIntent = new Intent(this, ChangeWallPaperAlarmReceiver.class);
+        changeWallpaperPendingIntent = PendingIntent.getBroadcast(this, 0, changeWallpaperAlarmIntent, 0);
+        AlarmManager changeManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        int changeInterval = 8000;
+        //int interval = 43200000;
+        changeManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
+        //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
 
         binding.tvTitile.setTextColor(Color.parseColor("#800CDD"));
@@ -129,13 +145,50 @@ public class HomeActivity extends AppCompatActivity{
         loadMoreByPage(1);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener(){
+        binding.fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-
+                showEndView(binding.fab, binding.llSetting);
             }
         });
+    }
+
+    private void showEndView(View startView, View endView) {
+        // Construct a container transform transition between two views.
+        MaterialContainerTransform transition = new MaterialContainerTransform();
+        transition.setScrimColor(Color.TRANSPARENT);
+        transition.setPathMotion(new MaterialArcMotion());
+        transition.setInterpolator(new FastOutSlowInInterpolator());
+        transition.setDuration(500);
+        transition.addListener(new TransitionListenerAdapter(){
+            @Override
+            public void onTransitionEnd(@NonNull Transition transition) {
+                super.onTransitionEnd(transition);
+                //transition.
+            }
+        });
+        //set the duration....
+
+        //Define the start and the end view
+        transition.setStartView(startView);
+        transition.setEndView(endView);
+        transition.addTarget(endView);
+
+        // Trigger the container transform transition.
+
+        TransitionManager.beginDelayedTransition(binding.root, transition);
+        startView.setVisibility(View.GONE);
+        endView.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(binding.llSetting.getVisibility() == View.VISIBLE){
+            showEndView(binding.llSetting, binding.fab);
+        }else {
+            super.onBackPressed();
+        }
     }
 
     public void downloadPicture(final String regularUrl, String large2x, int id){
@@ -239,7 +292,6 @@ public class HomeActivity extends AppCompatActivity{
 
                 Wallpapers wallpapers = new Wallpapers(f.getPath());
                 AppDatabase.getInstance(HomeActivity.this).daoWallpapers().insert(wallpapers);
-
             }catch(MalformedURLException e){
                 e.printStackTrace();
             }catch(IOException e){
