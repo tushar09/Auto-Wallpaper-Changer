@@ -40,7 +40,6 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/llSetting"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
@@ -49,7 +48,7 @@
             <TextView
                 android:background="@color/black"
                 android:gravity="center|start"
-                android:paddingLeft="@dimen/_15sdp"
+                android:paddingLeft="@dimen/_10sdp"
                 android:textStyle="bold"
                 android:text="Setting"
                 android:textColor="@color/white"
@@ -59,15 +58,117 @@
 
             <LinearLayout
                 android:background="@color/white"
-                android:padding="@dimen/_5sdp"
+                android:padding="@dimen/_15sdp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:text="Change wallpaper in every:"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:textStyle="bold"
+                    android:text="GENERAL"
+                    android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:text="Home Screen"
+                            android:textColor="@color/black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:text="Enable Home Screen Auto Change"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/hEnable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"/>
+
+                <LinearLayout
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:text="Lock Screen"
+                            android:textColor="@color/black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:text="Enable Screen Lock Auto Change"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/slEnable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+                <View
+                    android:background="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"/>
+
+                <LinearLayout
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            style="@style/TextAppearance.AppCompat.Medium"
+                            android:text="Timer"
+                            android:textColor="@color/black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:text="Change in every 4 hours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
                 <RadioGroup
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <RadioButton
