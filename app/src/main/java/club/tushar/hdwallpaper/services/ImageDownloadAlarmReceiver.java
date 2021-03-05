@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,16 +19,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
-import club.tushar.hdwallpaper.R;
-import club.tushar.hdwallpaper.activity.HomeActivity;
 import club.tushar.hdwallpaper.db.AppDatabase;
 import club.tushar.hdwallpaper.db.Wallpapers;
-import club.tushar.hdwallpaper.dto.downImage.DownloadImage;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
+import club.tushar.hdwallpaper.services.jobs.DownloadPictureJobService;
 import club.tushar.hdwallpaper.utils.Constants;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ImageDownloadAlarmReceiver extends BroadcastReceiver {
 
@@ -44,7 +37,10 @@ public class ImageDownloadAlarmReceiver extends BroadcastReceiver {
         int low = 0;
         int high = 79;
         int result = r.nextInt(high-low) + low;
-        loadNextWallpaper(context, result);
+        PixelsResponse pixelsResponse = Constants.getSharedPreferences(context).getResponse();
+        DownloadPictureJobService.startActionDownloadImage(context, pixelsResponse.getPhotos().get(result).getSrc().getOriginal(), pixelsResponse.getPhotos().get(result).getId() + "");
+        //loadNextWallpaper(context, result);
+
     }
 
     private class DownloadBitMap extends AsyncTask<URL, Integer, Bitmap> {

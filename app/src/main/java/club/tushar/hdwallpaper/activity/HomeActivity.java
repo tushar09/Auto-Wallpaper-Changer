@@ -7,9 +7,11 @@ import android.app.ProgressDialog;
 import android.app.WallpaperManager;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +24,7 @@ import android.os.Bundle;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.transition.MaterialArcMotion;
 import com.google.android.material.transition.MaterialContainerTransform;
 
@@ -41,6 +44,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
@@ -53,11 +58,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
 import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
+import club.tushar.hdwallpaper.databinding.DownloaderDialogBinding;
+import club.tushar.hdwallpaper.databinding.TimerDialogBinding;
 import club.tushar.hdwallpaper.db.AppDatabase;
 import club.tushar.hdwallpaper.db.Wallpapers;
 import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
@@ -75,14 +83,11 @@ public class HomeActivity extends AppCompatActivity{
 
     public static HomeActivity ha;
 
-    private MaterialDialog dialog;
+    private AlertDialog dialog;
 
     private WallpaperManager myWallpaperManager;
 
     private ProgressDialog pd;
-
-    private List<MainModelResponseDto> mainModelResponseDtos;
-    private List<String> url;
 
     private HomeAdapterNew adapterNew;
 
@@ -93,6 +98,14 @@ public class HomeActivity extends AppCompatActivity{
     private PendingIntent changeWallpaperPendingIntent;
 
     private File directory;
+
+    private DownloaderDialogBinding downloaderDialogBinding;
+
+    boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    int pageCount = 0;
+    private PixelsResponse pixelsResponse = new PixelsResponse();
+    private List<PixelsResponse.Photo> photos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -109,7 +122,7 @@ public class HomeActivity extends AppCompatActivity{
         Intent alarmIntent = new Intent(this, ImageDownloadAlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int interval = 8000;
+        int interval = 3600 * 1000;
         //int interval = 43200000;
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
@@ -118,7 +131,7 @@ public class HomeActivity extends AppCompatActivity{
         Intent changeWallpaperAlarmIntent = new Intent(this, ChangeWallPaperAlarmReceiver.class);
         changeWallpaperPendingIntent = PendingIntent.getBroadcast(this, 0, changeWallpaperAlarmIntent, 0);
         AlarmManager changeManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int changeInterval = 8000;
+        int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 36000 * 1000;
         //int interval = 43200000;
         changeManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
@@ -131,8 +144,32 @@ public class HomeActivity extends AppCompatActivity{
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         binding.tvTitile.getPaint().setShader(textShader);
 
+        pixelsResponse.setPhotos(photos);
+        adapterNew = new HomeAdapterNew(HomeActivity.this, pixelsResponse);
+        binding.container.rvList.setAdapter(adapterNew);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         binding.container.rvList.setLayoutManager(gridLayoutManager);
+
+
+
+        binding.container.rvList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) { //check for scroll down
+                    visibleItemCount = gridLayoutManager.getChildCount();
+                    totalItemCount = gridLayoutManager.getItemCount();
+                    pastVisiblesItems = gridLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            loading = false;
+                            pageCount++;
+                            loadMoreByPage(pageCount);
+                        }
+                    }
+                }
+            }
+        });
 
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
@@ -141,9 +178,10 @@ public class HomeActivity extends AppCompatActivity{
         ha = this;
 
         myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
+        pageCount++;
+        loadMoreByPage(pageCount);
 
-        loadMoreByPage(1);
-
+        setSetting();
 
         binding.fab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -151,6 +189,86 @@ public class HomeActivity extends AppCompatActivity{
                 showEndView(binding.fab, binding.llSetting);
             }
         });
+
+        binding.hEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Constants.getSharedPreferences(HomeActivity.this).setEnableAutoChange(isChecked);
+            }
+        });
+
+        binding.slEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Constants.getSharedPreferences(HomeActivity.this).setEnableScreenLockAutoChange(isChecked);
+            }
+        });
+
+        binding.llTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimerDialogBinding timerDialogBinding = DataBindingUtil.inflate(LayoutInflater.from(HomeActivity.this), R.layout.timer_dialog, null, false);
+                timerDialogBinding.rgTimer.clearCheck();
+                switch (Constants.getSharedPreferences(HomeActivity.this).getTimerAutoChange()){
+                    case 4:
+                        timerDialogBinding.rb4Hrs.setChecked(true);
+                        break;
+                    case 6:
+                        timerDialogBinding.rb6Hrs.setChecked(true);
+                        break;
+                    case 12:
+                        timerDialogBinding.rb12Hrs.setChecked(true);
+                        break;
+                    case 24:
+                        timerDialogBinding.rb24Hrs.setChecked(true);
+                        break;
+                }
+
+                timerDialogBinding.rgTimer.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        switch (checkedId){
+                            case R.id.rb4Hrs:
+                                Constants.getSharedPreferences(HomeActivity.this).setTimerAutoChange(4);
+                                break;
+                            case R.id.rb6Hrs:
+                                Constants.getSharedPreferences(HomeActivity.this).setTimerAutoChange(6);
+                                break;
+                            case R.id.rb12Hrs:
+                                Constants.getSharedPreferences(HomeActivity.this).setTimerAutoChange(12);
+                                break;
+                            case R.id.rb24Hrs:
+                                Constants.getSharedPreferences(HomeActivity.this).setTimerAutoChange(24);
+                                break;
+                        }
+                    }
+                });
+
+                new AlertDialog.Builder(HomeActivity.this)
+                        .setView(timerDialogBinding.getRoot())
+                        .setTitle("Set Timer")
+                        .setMessage("Change Wallpaper in every: ")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                setSetting();
+                            }
+                        })
+                        .setIcon(R.mipmap.ic_launcher)
+                        .show()
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                setSetting();
+                            }
+                        });
+            }
+        });
+    }
+
+    private void setSetting() {
+        binding.hEnable.setChecked(Constants.getSharedPreferences(this).isEnabledAutoChange());
+        binding.slEnable.setChecked(Constants.getSharedPreferences(this).isEnabledScreenLockAutoChange());
+        binding.tvTimer.setText("Change wallpaper in every " + Constants.getSharedPreferences(this).getTimerAutoChange() + " Hours");
     }
 
     private void showEndView(View startView, View endView) {
@@ -191,43 +309,46 @@ public class HomeActivity extends AppCompatActivity{
         }
     }
 
-    public void downloadPicture(final String regularUrl, String large2x, int id){
+    public void downloadPicture(PixelsResponse.Photo photo){
 
-        this.id = id + "";
+        this.id = photo.getId() + "";
 
         DialogDetailsBelow24Binding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_details_below_24, null, true);
+        binding.tvCredit.setText("Photo by " + photo.getPhotographer() + " on Pixel");
+        try {
+            binding.cvCredit.setCardBackgroundColor(Color.parseColor("#66" + photo.getAvgColor().replaceAll("#", "")));
+        }catch (Exception e){
+            binding.cvCredit.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
 
-        final Dialog customDialog = new Dialog(this);
-        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        customDialog.setCancelable(false);
-        customDialog.setContentView(binding.getRoot());
-        Glide.with(this).load(large2x).into(binding.ivImage);
-        binding.btNo.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                customDialog.dismiss();
-            }
-        });
-        binding.btYes.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
+        Glide.with(this).load(photo.getSrc().getLarge2x()).into(binding.ivImage);
+        AlertDialog customDialog = new MaterialAlertDialogBuilder(HomeActivity.this)
+                .setCancelable(false)
+                .setView(binding.getRoot())
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
-                try{
-                    customDialog.dismiss();
-                    dialog = new MaterialDialog.Builder(HomeActivity.this)
-                            .title(R.string.downloading)
-                            .content(R.string.please_wait)
-                            .progress(false, 100, true)
-                            .icon(ContextCompat.getDrawable(HomeActivity.this, R.mipmap.ic_launcher))
-                            .show();
-                    new DownloadBitMap().execute(new URL(regularUrl), null, null);
-                    //Log.e("regularUrl", fullUrl);
-                }catch(MalformedURLException e){
-                    e.printStackTrace();
-                }
-
-            }
-        });
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+                        try{
+                            downloaderDialogBinding = DataBindingUtil.inflate(LayoutInflater.from(HomeActivity.this), R.layout.downloader_dialog, null, false);
+                            dialog = new MaterialAlertDialogBuilder(HomeActivity.this)
+                                    .setIcon(R.mipmap.ic_launcher)
+                                    .setTitle(R.string.downloading)
+                                    .setMessage(R.string.please_wait)
+                                    .setView(downloaderDialogBinding.getRoot())
+                                    .show();
+                            new DownloadBitMap().execute(new URL(photo.getSrc().getOriginal()), null, null);
+                        }catch(MalformedURLException e){
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .show();
 
         customDialog.setCancelable(true);
         customDialog.setCanceledOnTouchOutside(true);
@@ -305,7 +426,8 @@ public class HomeActivity extends AppCompatActivity{
         @Override
         protected void onProgressUpdate(Integer... values){
             super.onProgressUpdate(values);
-            dialog.setProgress(values[0]);
+            //dialog.setProgress(values[0]);
+            downloaderDialogBinding.progress.setProgressCompat(values[0], true);
             //Log.e("progre+ss", values[0] + " " + dialog.getMaxProgress() + " " + dialog.getCurrentProgress());
         }
 
@@ -343,18 +465,23 @@ public class HomeActivity extends AppCompatActivity{
 
 
     public void loadMoreByPage(int page){
-
-        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f","mobile wallpaper", 1, 80).enqueue(new Callback<PixelsResponse>() {
+        loading = false;
+        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f","mobile wallpaper", page, 80).enqueue(new Callback<PixelsResponse>() {
             @Override
             public void onResponse(Call<PixelsResponse> call, Response<PixelsResponse> response) {
-                adapterNew = new HomeAdapterNew(HomeActivity.this, response.body());
-                binding.container.rvList.setAdapter(adapterNew);
+                if(pixelsResponse.getPhotos() == null){
+                    pixelsResponse.setPhotos(response.body().getPhotos());
+                }else {
+                    pixelsResponse.getPhotos().addAll(response.body().getPhotos());
+                }
+                adapterNew.notifyDataSetChanged();
                 Constants.getSharedPreferences(HomeActivity.this).setResponse(response.body());
+                loading = true;
             }
 
             @Override
             public void onFailure(Call<PixelsResponse> call, Throwable t) {
-
+                loading = true;
             }
         });
 

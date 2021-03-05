@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,48 +10,47 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/_180sdp">
+
             <ProgressBar
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
             <ImageView
                 android:id="@+id/iv_image"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_180sdp"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cvCredit"
+                android:padding="@dimen/_5sdp"
+                android:layout_margin="@dimen/_3sdp"
+                app:cardCornerRadius="@dimen/_3sdp"
+                app:contentPadding="@dimen/_5sdp"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/colorAccent"
+                android:layout_width="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvCredit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+            </com.google.android.material.card.MaterialCardView>
+
+
         </RelativeLayout>
 
-
         <TextView
-            android:layout_marginTop="@dimen/_5sdp"
-            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
             android:paddingLeft="@dimen/_10sdp"
             android:paddingRight="@dimen/_10sdp"
-            android:text="@string/dialog_details_below_24"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center|end">
-
-            <Button
-                android:id="@+id/bt_no"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:text="@string/no"
-                android:textColor="@color/red"/>
-
-            <Button
-                android:id="@+id/bt_yes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:text="@string/yes"
-                android:textColor="@color/red"/>
-        </LinearLayout>
+            android:text="@string/dialog_details_below_24"
+            android:textColor="@color/black" />
     </LinearLayout>
 
 </layout>

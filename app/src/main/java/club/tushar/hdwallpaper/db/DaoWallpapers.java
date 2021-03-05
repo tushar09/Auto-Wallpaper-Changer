@@ -1,6 +1,7 @@
 package club.tushar.hdwallpaper.db;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -20,4 +21,7 @@ public interface DaoWallpapers {
 
     @Query("SELECT * FROM wallpapers order by random() limit 1")
     Wallpapers getRandomWallpapers();
+
+    @Delete()
+    void delete(Wallpapers wallpapers);
 }

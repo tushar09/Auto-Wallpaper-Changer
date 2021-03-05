@@ -23,6 +23,7 @@ import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.db.AppDatabase;
 import club.tushar.hdwallpaper.db.Wallpapers;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
+import club.tushar.hdwallpaper.services.jobs.ChangeWallpaperJobService;
 import club.tushar.hdwallpaper.utils.Constants;
 
 public class ChangeWallPaperAlarmReceiver extends BroadcastReceiver {
@@ -32,7 +33,8 @@ public class ChangeWallPaperAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        new ChangeWallpaper(context).execute();
+        //new ChangeWallpaper(context).execute();
+        ChangeWallpaperJobService.changeWallpaper(context);
     }
 
     private class ChangeWallpaper extends AsyncTask<URL, Integer, Bitmap> {
@@ -55,10 +57,7 @@ public class ChangeWallPaperAlarmReceiver extends BroadcastReceiver {
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
                     myWallpaperManager.setBitmap(myBitmap, null, false, WallpaperManager.FLAG_LOCK);
                 }
-                Log.e("changed", "changed wall paper");
-            }catch(MalformedURLException e){
-                e.printStackTrace();
-            }catch(IOException e){
+            }catch(Exception e){
                 e.printStackTrace();
             }
 

@@ -44,8 +44,6 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, final int i) {
         Holder holder = (Holder) h;
-        //holder.binding.tvDownload.setText(dto.get(i).getPhotos().get(i).get.getLikes() + "");
-        //Picasso.get().load(dto.get(i).getUrl()).into(holder.binding.ivPic);
         holder.binding.tvAuthor.setText("by " + dto.getPhotos().get(i).getPhotographer());
         try{
             holder.binding.ll.setBackgroundColor(Color.parseColor(dto.getPhotos().get(i).getAvgColor()));
@@ -55,12 +53,11 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
 
         Glide.with(context).load(dto.getPhotos().get(i).getSrc().getLarge()).into(holder.binding.ivPic);
 
-        //Log.e("url", dto.get(i).getWebformatURL());
 
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                HomeActivity.ha.downloadPicture(dto.getPhotos().get(i).getSrc().getOriginal(), dto.getPhotos().get(i).getSrc().getLarge2x(), dto.getPhotos().get(i).getId());
+                HomeActivity.ha.downloadPicture(dto.getPhotos().get(i));
             }
         });
 

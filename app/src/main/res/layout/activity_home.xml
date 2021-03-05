@@ -40,6 +40,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/llSetting"
             android:layout_gravity="bottom"
             android:layout_width="match_parent"
@@ -83,12 +84,12 @@
                         android:layout_height="wrap_content">
                         <TextView
                             style="@style/TextAppearance.AppCompat.Medium"
-                            android:text="Home Screen"
+                            android:text="Auto Change"
                             android:textColor="@color/black"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                         <TextView
-                            android:text="Enable Home Screen Auto Change"
+                            android:text="Enable Auto Changing Wallpaper"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
@@ -143,6 +144,7 @@
                     android:layout_height="0.5dp"/>
 
                 <LinearLayout
+                    android:id="@+id/llTimer"
                     android:paddingBottom="@dimen/_10sdp"
                     android:paddingTop="@dimen/_10sdp"
                     android:gravity="center"
@@ -160,46 +162,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                         <TextView
-                            android:text="Change in every 4 hours"
+                            android:id="@+id/tvTimer"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                     </LinearLayout>
 
                 </LinearLayout>
 
-                <RadioGroup
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <RadioButton
-                        android:layoutDirection="rtl"
-                        android:textAlignment="textStart"
-                        android:layout_gravity="start"
-                        android:text="4 Hours"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <RadioButton
-                        android:layoutDirection="rtl"
-                        android:textAlignment="textStart"
-                        android:layout_gravity="start"
-                        android:text="6 Hours"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <RadioButton
-                        android:layoutDirection="rtl"
-                        android:textAlignment="textStart"
-                        android:layout_gravity="start"
-                        android:text="12 Hours"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <RadioButton
-                        android:layoutDirection="rtl"
-                        android:textAlignment="textStart"
-                        android:layout_gravity="start"
-                        android:text="24 Hours"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </RadioGroup>
             </LinearLayout>
 
         </LinearLayout>
@@ -210,7 +179,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
-            android:tint="@color/white"
+            app:tint="@color/white"
             app:backgroundTint="@color/black"
             app:srcCompat="@drawable/ic_baseline_settings_24"/>
 

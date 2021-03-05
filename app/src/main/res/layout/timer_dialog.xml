@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/_20sdp"
+        android:paddingRight="@dimen/_20sdp">
+        <RadioGroup
+            android:id="@+id/rgTimer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rb4Hrs"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:text="4 Hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <RadioButton
+                android:id="@+id/rb6Hrs"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:text="6 Hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <RadioButton
+                android:id="@+id/rb12Hrs"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:text="12 Hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <RadioButton
+                android:id="@+id/rb24Hrs"
+                android:layoutDirection="rtl"
+                android:textAlignment="textStart"
+                android:layout_gravity="start"
+                android:text="24 Hours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RadioGroup>
+    </LinearLayout>
+</layout>

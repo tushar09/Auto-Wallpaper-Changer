@@ -20,44 +20,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
                 <LinearLayout
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:orientation="vertical"
                     android:id="@+id/ll"
                     android:gravity="center|start"
                     android:background="@color/transperent_black"
                     android:layout_alignParentBottom="true"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_30sdp">
-                    <ImageView
-                        android:layout_marginLeft="@dimen/_5sdp"
-                        android:background="@drawable/heart_half_full"
+                    <TextView
+                        android:text="@string/pixels"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_8sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
                     <TextView
-                        android:layout_marginRight="@dimen/_5sdp"
-                        android:id="@+id/tv_download"
+                        android:id="@+id/tv_author"
                         android:textColor="@color/white"
-                        android:text="50"
+                        android:textSize="@dimen/_8sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-                    <LinearLayout
-                        android:paddingRight="@dimen/_5sdp"
-                        android:orientation="vertical"
-                        android:gravity="end|center"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <TextView
-                            android:text="@string/unsplash"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_8sdp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                        <TextView
-                            android:text="by moniqa"
-                            android:id="@+id/tv_author"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_8sdp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

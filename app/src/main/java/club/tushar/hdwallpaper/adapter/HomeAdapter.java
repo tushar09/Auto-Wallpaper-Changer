@@ -56,11 +56,10 @@ public class HomeAdapter extends BaseAdapter{
             holder = (Holder) view.getTag();
         }
 
-        holder.binding.tvDownload.setText(dto.get(i).getLikes() + "");
-        //Picasso.get().load(dto.get(i).getUrl()).into(holder.binding.ivPic);
+
         holder.binding.tvAuthor.setText("by " + dto.get(i).getUser());
         Glide.with(context).load(dto.get(i).getWebformatURL()).into(holder.binding.ivPic);
-        //Log.e("url", dto.get(i).getWebformatURL());
+
 
         view.setOnClickListener(new View.OnClickListener(){
             @Override
