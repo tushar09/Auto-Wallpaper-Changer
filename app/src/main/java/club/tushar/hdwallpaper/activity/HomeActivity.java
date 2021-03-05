@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.transition.MaterialArcMotion;
 import com.google.android.material.transition.MaterialContainerTransform;
+import com.google.gson.Gson;
 
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ import androidx.transition.Transition;
 import androidx.transition.TransitionListenerAdapter;
 import androidx.transition.TransitionManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
@@ -60,6 +62,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
@@ -67,6 +70,7 @@ import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
 import club.tushar.hdwallpaper.databinding.DownloaderDialogBinding;
 import club.tushar.hdwallpaper.databinding.TimerDialogBinding;
 import club.tushar.hdwallpaper.db.AppDatabase;
+import club.tushar.hdwallpaper.db.Photo;
 import club.tushar.hdwallpaper.db.Wallpapers;
 import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
@@ -122,8 +126,8 @@ public class HomeActivity extends AppCompatActivity{
         Intent alarmIntent = new Intent(this, ImageDownloadAlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int interval = 3600 * 1000;
-        //int interval = 43200000;
+        //int interval = 3600 * 1000;
+        int interval = 8000;
         manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
@@ -131,8 +135,9 @@ public class HomeActivity extends AppCompatActivity{
         Intent changeWallpaperAlarmIntent = new Intent(this, ChangeWallPaperAlarmReceiver.class);
         changeWallpaperPendingIntent = PendingIntent.getBroadcast(this, 0, changeWallpaperAlarmIntent, 0);
         AlarmManager changeManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 36000 * 1000;
-        //int interval = 43200000;
+        //int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 36000 * 1000;
+        int changeInterval = 8000;
+
         changeManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
@@ -475,6 +480,19 @@ public class HomeActivity extends AppCompatActivity{
                     pixelsResponse.getPhotos().addAll(response.body().getPhotos());
                 }
                 adapterNew.notifyDataSetChanged();
+                List<Photo> photos = new ArrayList<>();
+                for (int i = 0; i < response.body().getPhotos().size(); i++) {
+                    Photo photo = new Photo();
+                    photo.setLink(response.body().getPhotos().get(i).getSrc().getOriginal());
+                    photos.add(photo);
+                }
+                Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        AppDatabase.getInstance(HomeActivity.this).daoWallpapers().insert(photos);
+                        Log.e("size", AppDatabase.getInstance(HomeActivity.this).daoWallpapers().getPhotos().size() + "");
+                    }
+                });
                 Constants.getSharedPreferences(HomeActivity.this).setResponse(response.body());
                 loading = true;
             }

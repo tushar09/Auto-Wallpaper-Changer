@@ -18,8 +18,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
+import java.util.concurrent.Executors;
 
 import club.tushar.hdwallpaper.db.AppDatabase;
+import club.tushar.hdwallpaper.db.Photo;
 import club.tushar.hdwallpaper.db.Wallpapers;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.services.jobs.DownloadPictureJobService;
@@ -33,107 +35,14 @@ public class ImageDownloadAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e("done", System.currentTimeMillis() + "");
-        Random r = new Random();
-        int low = 0;
-        int high = 79;
-        int result = r.nextInt(high-low) + low;
-        PixelsResponse pixelsResponse = Constants.getSharedPreferences(context).getResponse();
-        DownloadPictureJobService.startActionDownloadImage(context, pixelsResponse.getPhotos().get(result).getSrc().getOriginal(), pixelsResponse.getPhotos().get(result).getId() + "");
-        //loadNextWallpaper(context, result);
-
-    }
-
-    private class DownloadBitMap extends AsyncTask<URL, Integer, Bitmap> {
-
-        private int result;
-        private Context context;
-
-        public DownloadBitMap(int result, Context context) {
-            this.result = result;
-            this.context = context;
-            myWallpaperManager = WallpaperManager.getInstance(context);
-        }
-
-        @Override
-        protected Bitmap doInBackground(URL... urls){
-            Bitmap myBitmap = null;
-            try{
-                PixelsResponse pixelsResponse = Constants.getSharedPreferences(context).getResponse();
-                URL url = new URL(pixelsResponse.getPhotos().get(result).getSrc().getOriginal());
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestProperty("Accept-Encoding", "identity");
-                connection.setDoInput(true);
-                connection.connect();
-                //InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                InputStream input = connection.getInputStream();
-
-                byte data[] = new byte[1024];
-                int count;
-
-                ByteArrayOutputStream imageBaos = new ByteArrayOutputStream();
-
-                while((count = input.read(data)) != -1){
-                    imageBaos.write(data, 0, count);
-                }
-                myBitmap = BitmapFactory.decodeByteArray(imageBaos.toByteArray(), 0, imageBaos.size());
-
-                input.close();
-                imageBaos.flush();
-                imageBaos.close();
-                connection.disconnect();
-
-                File f = new File(context.getDir("myFiles", Context.MODE_PRIVATE), pixelsResponse.getPhotos().get(result).getId() + "");
-                f.createNewFile();
-
-                //Convert bitmap to byte array
-                Bitmap bitmap = myBitmap;
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
-                byte[] bitmapdata = bos.toByteArray();
-
-                //write the bytes in file
-                FileOutputStream fos = new FileOutputStream(f);
-                fos.write(bitmapdata);
-                fos.flush();
-
-                Wallpapers wallpapers = new Wallpapers(f.getPath());
-                AppDatabase.getInstance(context).daoWallpapers().insert(wallpapers);
-                Log.e("top", AppDatabase.getInstance(context).daoWallpapers().getNext().getPath());
-                Log.e("path", wallpapers.getPath());
-            }catch(MalformedURLException e){
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
+        Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                Photo photo = AppDatabase.getInstance(context).daoWallpapers().getRandomPhoto();
+                DownloadPictureJobService.startActionDownloadImage(context, photo.getLink(), photo.getId() + "");
             }
+        });
 
-
-            return myBitmap;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values){
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(final Bitmap bitmap){
-            super.onPostExecute(bitmap);
-//            try {
-//                myWallpaperManager.setBitmap(bitmap);
-//                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-//                    myWallpaperManager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK);
-//                }
-//                Log.e("err", "Finished");
-//            } catch (IOException e) {
-//                Log.e("err", e.toString());
-//                e.printStackTrace();
-//            }
-
-        }
-    }
-
-    private void loadNextWallpaper(Context context, int result) {
-        new DownloadBitMap(result, context).execute();
     }
 
 }

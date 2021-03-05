@@ -13,15 +13,27 @@ public interface DaoWallpapers {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Wallpapers wallpapers);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(List<Photo> photos);
+
     @Query("SELECT * FROM wallpapers ORDER BY id ASC LIMIT 1")
     Wallpapers getNext();
 
     @Query("SELECT * FROM wallpapers")
     List<Wallpapers> getWallpapers();
 
+    @Query("SELECT * FROM photo")
+    List<Photo> getPhotos();
+
+
     @Query("SELECT * FROM wallpapers order by random() limit 1")
     Wallpapers getRandomWallpapers();
 
+    @Query("SELECT * FROM photo order by random() limit 1")
+    Photo getRandomPhoto();
+
     @Delete()
     void delete(Wallpapers wallpapers);
+
+
 }
