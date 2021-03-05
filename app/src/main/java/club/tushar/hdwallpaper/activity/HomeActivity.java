@@ -126,19 +126,19 @@ public class HomeActivity extends AppCompatActivity{
         Intent alarmIntent = new Intent(this, ImageDownloadAlarmReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //int interval = 3600 * 1000;
-        int interval = 8000;
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        int interval = 3600 * 1000;
+        //int interval = 8000;
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
         /* Retrieve a PendingIntent that will perform a broadcast */
         Intent changeWallpaperAlarmIntent = new Intent(this, ChangeWallPaperAlarmReceiver.class);
         changeWallpaperPendingIntent = PendingIntent.getBroadcast(this, 0, changeWallpaperAlarmIntent, 0);
         AlarmManager changeManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 36000 * 1000;
-        int changeInterval = 8000;
+        int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 3600 * 1000;
+        //int changeInterval = 8000;
 
-        changeManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
+        changeManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
         Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
