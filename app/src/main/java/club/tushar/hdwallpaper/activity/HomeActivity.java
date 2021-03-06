@@ -1,15 +1,9 @@
 package club.tushar.hdwallpaper.activity;
 
 import android.app.AlarmManager;
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.WallpaperManager;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,38 +16,34 @@ import android.graphics.Shader;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.transition.MaterialArcMotion;
-import com.google.android.material.transition.MaterialContainerTransform;
-import com.google.gson.Gson;
-
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.transition.Transition;
-import androidx.transition.TransitionListenerAdapter;
-import androidx.transition.TransitionManager;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.Transition;
+import androidx.transition.TransitionListenerAdapter;
+import androidx.transition.TransitionManager;
+
+import com.bumptech.glide.Glide;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.transition.MaterialArcMotion;
+import com.google.android.material.transition.MaterialContainerTransform;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -68,6 +58,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 import club.tushar.hdwallpaper.R;
+import club.tushar.hdwallpaper.adapter.HomeAdapterNew;
 import club.tushar.hdwallpaper.databinding.ActivityHomeBinding;
 import club.tushar.hdwallpaper.databinding.DialogDetailsBelow24Binding;
 import club.tushar.hdwallpaper.databinding.DownloaderDialogBinding;
@@ -75,7 +66,6 @@ import club.tushar.hdwallpaper.databinding.TimerDialogBinding;
 import club.tushar.hdwallpaper.db.AppDatabase;
 import club.tushar.hdwallpaper.db.Photo;
 import club.tushar.hdwallpaper.db.Wallpapers;
-import club.tushar.hdwallpaper.dto.mainHomeModel.MainModelResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.services.ChangeWallPaperAlarmReceiver;
 import club.tushar.hdwallpaper.services.ImageDownloadAlarmReceiver;

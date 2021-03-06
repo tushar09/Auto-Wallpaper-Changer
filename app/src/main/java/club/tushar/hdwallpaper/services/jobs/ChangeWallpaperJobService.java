@@ -8,12 +8,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.File;
 
@@ -74,6 +77,9 @@ public class ChangeWallpaperJobService extends JobIntentService {
                 if(f.delete()){
                     AppDatabase.getInstance(this).daoWallpapers().delete(wallpapers);
                 }
+                Bundle bundle = new Bundle();
+                bundle.putString("changed", wallpapers.getPath());
+                FirebaseAnalytics.getInstance(this).logEvent("wallpaper_changed", bundle);
             }catch(Exception e){
                 e.printStackTrace();
             }

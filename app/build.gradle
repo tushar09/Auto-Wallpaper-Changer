@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 30
@@ -48,20 +48,24 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+
+    implementation platform('com.google.firebase:firebase-bom:26.6.0')
+    implementation 'com.google.firebase:firebase-analytics'
+
     //retrofit fot api calls
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.+'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
+
     //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.github.bumptech.glide:glide:4.12.0'
+
     //size
     implementation 'com.intuit.sdp:sdp-android:1.0.5'
-    //custom dialog box
-    implementation 'com.yarolegovich:lovely-dialog:1.0.7'
-    implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
 
+    //room
     implementation "android.arch.persistence.room:runtime:2.3.0-beta02"
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 }

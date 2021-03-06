@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -113,6 +116,11 @@ public class DownloadPictureJobService extends JobIntentService {
 
             Wallpapers wallpapers = new Wallpapers(f.getPath());
             AppDatabase.getInstance(this).daoWallpapers().insert(wallpapers);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("link", imageUrl);
+            FirebaseAnalytics.getInstance(this).logEvent("Download", bundle);
+
             Log.e("service path", wallpapers.getPath());
             Log.e("download", "done");
         }catch(MalformedURLException e){
