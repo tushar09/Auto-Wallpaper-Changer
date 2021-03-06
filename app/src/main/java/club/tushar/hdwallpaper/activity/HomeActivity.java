@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.Rect;
 import android.graphics.Shader;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -39,7 +40,9 @@ import androidx.transition.Transition;
 import androidx.transition.TransitionListenerAdapter;
 import androidx.transition.TransitionManager;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
@@ -81,7 +84,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity {
 
     private ActivityHomeBinding binding;
 
@@ -112,7 +115,7 @@ public class HomeActivity extends AppCompatActivity{
     private List<PixelsResponse.Photo> photos = new ArrayList<>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -133,7 +136,7 @@ public class HomeActivity extends AppCompatActivity{
 
         /* Retrieve a PendingIntent that will perform a broadcast */
         Intent changeWallpaperAlarmIntent = new Intent(this, ChangeWallPaperAlarmReceiver.class);
-        changeWallpaperPendingIntent = PendingIntent.getBroadcast(this, 0, changeWallpaperAlarmIntent, 0);
+        changeWallpaperPendingIntent = PendingIntent.getBroadcast(this, 1, changeWallpaperAlarmIntent, 0);
         AlarmManager changeManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 3600 * 1000;
         //int changeInterval = 8000;
@@ -141,10 +144,9 @@ public class HomeActivity extends AppCompatActivity{
         changeManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
-        Toast.makeText(this, "Alarm Set", Toast.LENGTH_SHORT).show();
 
         binding.tvTitile.setTextColor(Color.parseColor("#800CDD"));
-        Shader textShader=new LinearGradient(0, 0, binding.tvTitile.getPaint().measureText(getString(R.string.app_name)), binding.tvTitile.getTextSize(),
+        Shader textShader = new LinearGradient(0, 0, binding.tvTitile.getPaint().measureText(getString(R.string.app_name)), binding.tvTitile.getTextSize(),
                 new int[]{Color.parseColor("#800CDD"), Color.parseColor("#3BA3F2")},
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         binding.tvTitile.getPaint().setShader(textShader);
@@ -154,7 +156,6 @@ public class HomeActivity extends AppCompatActivity{
         binding.container.rvList.setAdapter(adapterNew);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         binding.container.rvList.setLayoutManager(gridLayoutManager);
-
 
 
         binding.container.rvList.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -188,9 +189,9 @@ public class HomeActivity extends AppCompatActivity{
 
         setSetting();
 
-        binding.fab.setOnClickListener(new View.OnClickListener(){
+        binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 showEndView(binding.fab, binding.llSetting);
             }
         });
@@ -214,7 +215,7 @@ public class HomeActivity extends AppCompatActivity{
             public void onClick(View v) {
                 TimerDialogBinding timerDialogBinding = DataBindingUtil.inflate(LayoutInflater.from(HomeActivity.this), R.layout.timer_dialog, null, false);
                 timerDialogBinding.rgTimer.clearCheck();
-                switch (Constants.getSharedPreferences(HomeActivity.this).getTimerAutoChange()){
+                switch (Constants.getSharedPreferences(HomeActivity.this).getTimerAutoChange()) {
                     case 4:
                         timerDialogBinding.rb4Hrs.setChecked(true);
                         break;
@@ -232,7 +233,7 @@ public class HomeActivity extends AppCompatActivity{
                 timerDialogBinding.rgTimer.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        switch (checkedId){
+                        switch (checkedId) {
                             case R.id.rb4Hrs:
                                 Constants.getSharedPreferences(HomeActivity.this).setTimerAutoChange(4);
                                 break;
@@ -283,7 +284,7 @@ public class HomeActivity extends AppCompatActivity{
         transition.setPathMotion(new MaterialArcMotion());
         transition.setInterpolator(new FastOutSlowInInterpolator());
         transition.setDuration(500);
-        transition.addListener(new TransitionListenerAdapter(){
+        transition.addListener(new TransitionListenerAdapter() {
             @Override
             public void onTransitionEnd(@NonNull Transition transition) {
                 super.onTransitionEnd(transition);
@@ -307,14 +308,14 @@ public class HomeActivity extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        if(binding.llSetting.getVisibility() == View.VISIBLE){
+        if (binding.llSetting.getVisibility() == View.VISIBLE) {
             showEndView(binding.llSetting, binding.fab);
-        }else {
+        } else {
             super.onBackPressed();
         }
     }
 
-    public void downloadPicture(PixelsResponse.Photo photo){
+    public void downloadPicture(PixelsResponse.Photo photo) {
 
         this.id = photo.getId() + "";
 
@@ -322,7 +323,7 @@ public class HomeActivity extends AppCompatActivity{
         binding.tvCredit.setText("Photo by " + photo.getPhotographer() + " on Pixel");
         try {
             binding.cvCredit.setCardBackgroundColor(Color.parseColor("#66" + photo.getAvgColor().replaceAll("#", "")));
-        }catch (Exception e){
+        } catch (Exception e) {
             binding.cvCredit.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
 
@@ -339,7 +340,7 @@ public class HomeActivity extends AppCompatActivity{
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface d, int which) {
-                        try{
+                        try {
                             downloaderDialogBinding = DataBindingUtil.inflate(LayoutInflater.from(HomeActivity.this), R.layout.downloader_dialog, null, false);
                             dialog = new MaterialAlertDialogBuilder(HomeActivity.this)
                                     .setIcon(R.mipmap.ic_launcher)
@@ -348,7 +349,7 @@ public class HomeActivity extends AppCompatActivity{
                                     .setView(downloaderDialogBinding.getRoot())
                                     .show();
                             new DownloadBitMap().execute(new URL(photo.getSrc().getOriginal()), null, null);
-                        }catch(MalformedURLException e){
+                        } catch (MalformedURLException e) {
                             e.printStackTrace();
                         }
                     }
@@ -364,15 +365,15 @@ public class HomeActivity extends AppCompatActivity{
 
     }
 
-    private class DownloadBitMap extends AsyncTask<URL, Integer, Bitmap>{
+    private class DownloadBitMap extends AsyncTask<URL, Integer, Bitmap> {
 
         @Override
-        protected Bitmap doInBackground(URL... urls){
+        protected Bitmap doInBackground(URL... urls) {
 
             URL url = null;
             int fileLength = 0;
             Bitmap myBitmap = null;
-            try{
+            try {
                 url = urls[0];
 
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -389,7 +390,7 @@ public class HomeActivity extends AppCompatActivity{
 
                 ByteArrayOutputStream imageBaos = new ByteArrayOutputStream();
 
-                while((count = input.read(data)) != -1){
+                while ((count = input.read(data)) != -1) {
                     total += count;
                     // publishing the progress....
                     imageBaos.write(data, 0, count);
@@ -408,7 +409,7 @@ public class HomeActivity extends AppCompatActivity{
                 //Convert bitmap to byte array
                 Bitmap bitmap = myBitmap;
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 0 /*ignored for PNG*/, bos);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100 /*ignored for PNG*/, bos);
                 byte[] bitmapdata = bos.toByteArray();
 
                 //write the bytes in file
@@ -418,9 +419,9 @@ public class HomeActivity extends AppCompatActivity{
 
                 Wallpapers wallpapers = new Wallpapers(f.getPath());
                 AppDatabase.getInstance(HomeActivity.this).daoWallpapers().insert(wallpapers);
-            }catch(MalformedURLException e){
+            } catch (MalformedURLException e) {
                 e.printStackTrace();
-            }catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -429,7 +430,7 @@ public class HomeActivity extends AppCompatActivity{
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values){
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             //dialog.setProgress(values[0]);
             downloaderDialogBinding.progress.setProgressCompat(values[0], true);
@@ -437,30 +438,53 @@ public class HomeActivity extends AppCompatActivity{
         }
 
         @Override
-        protected void onPostExecute(final Bitmap bitmap){
+        protected void onPostExecute(final Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
             dialog.dismiss();
             pd.show();
-            new Thread(new Runnable(){
+            new Thread(new Runnable() {
                 @Override
-                public void run(){
-                    try{
+                public void run() {
+                    try {
                         pd.setMessage(getResources().getString(R.string.appling_picture_home));
                         myWallpaperManager.setBitmap(bitmap);
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                            runOnUiThread(new Runnable(){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            runOnUiThread(new Runnable() {
                                 @Override
-                                public void run(){
+                                public void run() {
                                     pd.setMessage(getResources().getString(R.string.appling_picture_lock));
                                 }
                             });
+                            // 1. Get
+                            // screen size.
+                            DisplayMetrics metrics = new DisplayMetrics();
+                            Display display = getWindowManager().getDefaultDisplay();
+                            display.getMetrics(metrics);
+                            final int screenWidth = metrics.widthPixels;
+                            final int screenHeight = metrics.heightPixels;
 
-                            myWallpaperManager.setBitmap(bitmap, null, false, WallpaperManager.FLAG_LOCK);
+                            float multipleFactor;
+                            float h = (float) bitmap.getHeight() / screenHeight;
+                            float w = (float) bitmap.getWidth() / screenWidth;
+
+                            if (h < w) {
+                                multipleFactor = h;
+                            } else {
+                                multipleFactor = w;
+                            }
+                            int shift = bitmap.getWidth() / 4;
+                            Rect rect = new Rect();
+                            rect.left = shift;
+                            rect.top = 0;
+                            rect.right = shift + Math.abs((int) (screenWidth * multipleFactor));
+                            rect.bottom = (int) (screenHeight * multipleFactor);
+                            myWallpaperManager.setBitmap(bitmap, rect, false, WallpaperManager.FLAG_LOCK);
                         }
                         pd.dismiss();
-                    }catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
+                        Log.e("wall err", e.toString());
                     }
 
                 }
@@ -469,14 +493,14 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 
-    public void loadMoreByPage(int page){
+    public void loadMoreByPage(int page) {
         loading = false;
-        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f","mobile wallpaper", page, 80).enqueue(new Callback<PixelsResponse>() {
+        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f", "mobile wallpaper", page, 80).enqueue(new Callback<PixelsResponse>() {
             @Override
             public void onResponse(Call<PixelsResponse> call, Response<PixelsResponse> response) {
-                if(pixelsResponse.getPhotos() == null){
+                if (pixelsResponse.getPhotos() == null) {
                     pixelsResponse.setPhotos(response.body().getPhotos());
-                }else {
+                } else {
                     pixelsResponse.getPhotos().addAll(response.body().getPhotos());
                 }
                 adapterNew.notifyDataSetChanged();
@@ -506,21 +530,21 @@ public class HomeActivity extends AppCompatActivity{
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.menu_home, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.action_settings){
+        if (id == R.id.action_settings) {
             return true;
         }
 

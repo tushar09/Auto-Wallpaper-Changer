@@ -36,43 +36,4 @@ public class ChangeWallPaperAlarmReceiver extends BroadcastReceiver {
         //new ChangeWallpaper(context).execute();
         ChangeWallpaperJobService.changeWallpaper(context);
     }
-
-    private class ChangeWallpaper extends AsyncTask<URL, Integer, Bitmap> {
-
-        private Context context;
-
-        public ChangeWallpaper(Context context) {
-            this.context = context;
-            myWallpaperManager = WallpaperManager.getInstance(context);
-        }
-
-        @Override
-        protected Bitmap doInBackground(URL... urls){
-            Bitmap myBitmap = null;
-            try{
-
-                Wallpapers wallpapers = AppDatabase.getInstance(context).daoWallpapers().getRandomWallpapers();
-                myBitmap = BitmapFactory.decodeFile(wallpapers.getPath());
-                myWallpaperManager.setBitmap(myBitmap);
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
-                    myWallpaperManager.setBitmap(myBitmap, null, false, WallpaperManager.FLAG_LOCK);
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-
-            return myBitmap;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values){
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(final Bitmap bitmap){
-            super.onPostExecute(bitmap);
-        }
-    }
 }

@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
@@ -44,15 +47,34 @@ public class ChangeWallpaperJobService extends JobIntentService {
                 myBitmap = BitmapFactory.decodeFile(wallpapers.getPath());
                 myWallpaperManager.setBitmap(myBitmap);
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && Constants.getSharedPreferences(this).isEnabledScreenLockAutoChange()){
-                    myWallpaperManager.setBitmap(myBitmap, null, false, WallpaperManager.FLAG_LOCK);
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    Display display = getDisplay();
+                    display.getMetrics(metrics);
+                    final int screenWidth  = metrics.widthPixels;
+                    final int screenHeight = metrics.heightPixels;
+
+                    float multipleFactor;
+                    float h = (float)myBitmap.getHeight() / screenHeight;
+                    float w = (float)myBitmap.getWidth() / screenWidth;
+
+                    if(h < w){
+                        multipleFactor = h;
+                    }else{
+                        multipleFactor = w;
+                    }
+                    int shift = myBitmap.getWidth() / 4;
+                    Rect rect = new Rect();
+                    rect.left = shift;
+                    rect.top = 0;
+                    rect.right = shift + Math.abs((int) (screenWidth * multipleFactor));
+                    rect.bottom = (int) (screenHeight * multipleFactor);
+                    myWallpaperManager.setBitmap(myBitmap, rect, false, WallpaperManager.FLAG_LOCK);
                 }
                 File f = new File(wallpapers.getPath());
                 if(f.delete()){
                     AppDatabase.getInstance(this).daoWallpapers().delete(wallpapers);
                 }
-                Log.e("wallpaper", "Changed");
             }catch(Exception e){
-                Log.e("wallpaper err", e.toString());
                 e.printStackTrace();
             }
         }
