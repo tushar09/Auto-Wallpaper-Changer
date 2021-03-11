@@ -40,7 +40,7 @@
         <receiver
             android:name=".services.ChangeWallPaperAlarmReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity
             android:name=".activity.SettingsActivity"
@@ -49,7 +49,7 @@
         <receiver
             android:name=".services.ImageDownloadAlarmReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity
             android:name=".activity.HomeActivity"
@@ -61,10 +61,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="2f0dba9963664f988d312e2ffb6ffd364040f42e" />
     </application>
 
 </manifest>

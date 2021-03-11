@@ -121,7 +121,11 @@ public class HomeActivity extends AppCompatActivity {
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         int interval = 3600 * 1000;
         //int interval = 8000;
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 30000, pendingIntent);
+        }else {
+            manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+        }
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
         /* Retrieve a PendingIntent that will perform a broadcast */
@@ -131,7 +135,11 @@ public class HomeActivity extends AppCompatActivity {
         int changeInterval = Constants.getSharedPreferences(this).getTimerAutoChange() * 3600 * 1000;
         //int changeInterval = 8000;
 
-        changeManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            changeManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 30000, changeWallpaperPendingIntent);
+        }else {
+            changeManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), changeInterval, changeWallpaperPendingIntent);
+        }
         //manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
 
@@ -146,7 +154,6 @@ public class HomeActivity extends AppCompatActivity {
         binding.container.rvList.setAdapter(adapterNew);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         binding.container.rvList.setLayoutManager(gridLayoutManager);
-
 
         binding.container.rvList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

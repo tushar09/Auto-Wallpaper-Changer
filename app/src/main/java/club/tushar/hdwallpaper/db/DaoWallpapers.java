@@ -32,8 +32,8 @@ public interface DaoWallpapers {
     @Query("SELECT * FROM photo order by random() limit 1")
     Photo getRandomPhoto();
 
-    @Delete()
-    void delete(Wallpapers wallpapers);
+    @Query("DELETE FROM wallpapers WHERE id = :id")
+    void delete(long id);
 
 
 }

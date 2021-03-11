@@ -76,7 +76,6 @@ public class DownloadPictureJobService extends JobIntentService {
 
         Bitmap myBitmap = null;
         try{
-            PixelsResponse pixelsResponse = Constants.getSharedPreferences(this).getResponse();
             URL url = new URL(imageUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Accept-Encoding", "identity");

@@ -32,10 +32,7 @@ import club.tushar.hdwallpaper.utils.Constants;
  */
 public class ChangeWallpaperJobService extends JobIntentService {
 
-    private WallpaperManager myWallpaperManager;
-
     public static void changeWallpaper(Context context){
-        WallpaperManager myWallpaperManager = WallpaperManager.getInstance(context);
         enqueueWork(context, ChangeWallpaperJobService.class, 2, new Intent());
     }
 
@@ -73,14 +70,16 @@ public class ChangeWallpaperJobService extends JobIntentService {
                     rect.bottom = (int) (screenHeight * multipleFactor);
                     myWallpaperManager.setBitmap(myBitmap, rect, false, WallpaperManager.FLAG_LOCK);
                 }
-                File f = new File(wallpapers.getPath());
-                if(f.delete()){
-                    AppDatabase.getInstance(this).daoWallpapers().delete(wallpapers);
-                }
+//                File f = new File(wallpapers.getPath());
+//                if(f.delete()){
+//                    AppDatabase.getInstance(this).daoWallpapers().delete(wallpapers.getId());
+//                }
+                AppDatabase.getInstance(this).daoWallpapers().delete(wallpapers.getId());
                 Bundle bundle = new Bundle();
                 bundle.putString("changed", wallpapers.getPath());
                 FirebaseAnalytics.getInstance(this).logEvent("wallpaper_changed", bundle);
             }catch(Exception e){
+                Log.e("err", e.toString());
                 e.printStackTrace();
             }
         }

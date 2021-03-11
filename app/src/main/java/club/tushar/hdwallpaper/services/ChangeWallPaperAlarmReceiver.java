@@ -1,5 +1,7 @@
 package club.tushar.hdwallpaper.services;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,7 +35,16 @@ public class ChangeWallPaperAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        //new ChangeWallpaper(context).execute();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Intent changeWallpaperAlarmIntent = new Intent(context, ChangeWallPaperAlarmReceiver.class);
+            PendingIntent changeWallpaperPendingIntent = PendingIntent.getBroadcast(context, 1, changeWallpaperAlarmIntent, 0);
+            AlarmManager changeManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            //int changeInterval = Constants.getSharedPreferences(context).getTimerAutoChange() * 3600 * 1000;
+            int changeInterval = 1800 * 1000;
+            changeManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + changeInterval, changeWallpaperPendingIntent);
+            Log.e("execute", "exe");
+        }
+
         ChangeWallpaperJobService.changeWallpaper(context);
     }
 }
