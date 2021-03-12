@@ -3,6 +3,14 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('/mnt/9898E8EA98E8C838/Desk/autoWallPaperChanger.jks')
+            keyPassword 'manhunter)(*'
+            keyAlias 'SHAH MD MONIRUL ISLAM'
+            storePassword 'manhunter)(*'
+        }
+    }
     compileSdkVersion 30
     defaultConfig {
         applicationId "club.tushar.hdwallpaper"
@@ -26,6 +34,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     dataBinding {
