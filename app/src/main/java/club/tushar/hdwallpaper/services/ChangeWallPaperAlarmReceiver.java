@@ -39,8 +39,8 @@ public class ChangeWallPaperAlarmReceiver extends BroadcastReceiver {
             Intent changeWallpaperAlarmIntent = new Intent(context, ChangeWallPaperAlarmReceiver.class);
             PendingIntent changeWallpaperPendingIntent = PendingIntent.getBroadcast(context, 1, changeWallpaperAlarmIntent, 0);
             AlarmManager changeManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            //int changeInterval = Constants.getSharedPreferences(context).getTimerAutoChange() * 3600 * 1000;
-            int changeInterval = 1800 * 1000;
+            int changeInterval = Constants.getSharedPreferences(context).getTimerAutoChange() * 3600 * 1000;
+            //int changeInterval = 1800 * 1000;
             changeManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + changeInterval, changeWallpaperPendingIntent);
             Log.e("execute", "exe");
         }

@@ -65,7 +65,6 @@ public class DownloadPictureJobService extends JobIntentService {
         intent.putExtra(EXTRA_PARAM_IMAGE_URL, imageUrl);
         intent.putExtra(EXTRA_PARAM_IMAGE_ID, id);
         enqueueWork(context, DownloadPictureJobService.class, 1, intent);
-        Log.e("service", "started");
     }
 
     /**
