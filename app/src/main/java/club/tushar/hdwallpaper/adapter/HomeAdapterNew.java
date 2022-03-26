@@ -18,16 +18,17 @@ import java.util.List;
 import club.tushar.hdwallpaper.R;
 import club.tushar.hdwallpaper.activity.HomeActivity;
 import club.tushar.hdwallpaper.databinding.RowHomeBinding;
+import club.tushar.hdwallpaper.dto.foxytool.WallpaperResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.dto.unPlash.HomeResponseDto;
 
 public class HomeAdapterNew extends RecyclerView.Adapter {
 
     private Context context;
-    private PixelsResponse dto;
+    private List<WallpaperResponseDto> dto;
     private int count = 1;
 
-    public HomeAdapterNew(Context context, PixelsResponse dto) {
+    public HomeAdapterNew(Context context, List<WallpaperResponseDto> dto) {
         this.context = context;
         this.dto = dto;
         this.count = count;
@@ -44,20 +45,20 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder h, final int i) {
         Holder holder = (Holder) h;
-        holder.binding.tvAuthor.setText("by " + dto.getPhotos().get(i).getPhotographer());
+        holder.binding.tvAuthor.setText("by " + dto.get(i).getUsername());
         try{
-            holder.binding.ll.setBackgroundColor(Color.parseColor(dto.getPhotos().get(i).getAvgColor()));
+            //holder.binding.ll.setBackgroundColor(Color.parseColor(dto.getPhotos().get(i).getAvgColor()));
         }catch (Exception e){
-            Log.e("coll,or", dto.getPhotos().get(i).getAvgColor());
+            //Log.e("coll,or", dto.getPhotos().get(i).getAvgColor());
         }
 
-        Glide.with(context).load(dto.getPhotos().get(i).getSrc().getLarge()).into(holder.binding.ivPic);
+        Glide.with(context).load(dto.get(i).getRegularUrl()).into(holder.binding.ivPic);
 
 
         holder.binding.getRoot().setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                HomeActivity.ha.downloadPicture(dto.getPhotos().get(i));
+                HomeActivity.ha.downloadPicture(dto.get(i));
             }
         });
 
@@ -65,7 +66,7 @@ public class HomeAdapterNew extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return dto.getPhotos().size();
+        return dto.size();
     }
 
     private class Holder extends RecyclerView.ViewHolder{

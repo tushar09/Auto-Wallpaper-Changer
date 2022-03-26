@@ -66,6 +66,7 @@ import club.tushar.hdwallpaper.databinding.TimerDialogBinding;
 import club.tushar.hdwallpaper.db.AppDatabase;
 import club.tushar.hdwallpaper.db.Photo;
 import club.tushar.hdwallpaper.db.Wallpapers;
+import club.tushar.hdwallpaper.dto.foxytool.WallpaperResponseDto;
 import club.tushar.hdwallpaper.dto.pixels.PixelsResponse;
 import club.tushar.hdwallpaper.services.ChangeWallPaperAlarmReceiver;
 import club.tushar.hdwallpaper.services.ImageDownloadAlarmReceiver;
@@ -101,7 +102,8 @@ public class HomeActivity extends AppCompatActivity {
     boolean loading = true;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
     int pageCount = 0;
-    private PixelsResponse pixelsResponse = new PixelsResponse();
+    //private PixelsResponse pixelsResponse = new PixelsResponse();
+    private List<WallpaperResponseDto> pixelsResponse = new ArrayList<>();
     private List<PixelsResponse.Photo> photos = new ArrayList<>();
 
     @Override
@@ -149,7 +151,7 @@ public class HomeActivity extends AppCompatActivity {
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         binding.tvTitile.getPaint().setShader(textShader);
 
-        pixelsResponse.setPhotos(photos);
+        //pixelsResponse.setPhotos(photos);
         adapterNew = new HomeAdapterNew(HomeActivity.this, pixelsResponse);
         binding.container.rvList.setAdapter(adapterNew);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
@@ -167,7 +169,7 @@ public class HomeActivity extends AppCompatActivity {
                         if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                             loading = false;
                             pageCount++;
-                            loadMoreByPage(pageCount);
+                            //loadMoreByPage(pageCount);
                         }
                     }
                 }
@@ -312,19 +314,19 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public void downloadPicture(PixelsResponse.Photo photo) {
+    public void downloadPicture(WallpaperResponseDto photo) {
 
         this.id = photo.getId() + "";
 
         DialogDetailsBelow24Binding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_details_below_24, null, true);
-        binding.tvCredit.setText("Photo by " + photo.getPhotographer() + " on Pixel");
+        //binding.tvCredit.setText("Photo by " + photo.getPhotographer() + " on Pixel");
         try {
-            binding.cvCredit.setCardBackgroundColor(Color.parseColor("#66" + photo.getAvgColor().replaceAll("#", "")));
+            //binding.cvCredit.setCardBackgroundColor(Color.parseColor("#66" + photo.getAvgColor().replaceAll("#", "")));
         } catch (Exception e) {
             binding.cvCredit.setCardBackgroundColor(getResources().getColor(R.color.colorAccent));
         }
 
-        Glide.with(this).load(photo.getSrc().getLarge2x()).into(binding.ivImage);
+        Glide.with(this).load(photo.getRegularUrl()).into(binding.ivImage);
         AlertDialog customDialog = new MaterialAlertDialogBuilder(HomeActivity.this)
                 .setCancelable(false)
                 .setView(binding.getRoot())
@@ -345,7 +347,7 @@ public class HomeActivity extends AppCompatActivity {
                                     .setMessage(R.string.please_wait)
                                     .setView(downloaderDialogBinding.getRoot())
                                     .show();
-                            new DownloadBitMap().execute(new URL(photo.getSrc().getOriginal()), null, null);
+                            new DownloadBitMap().execute(new URL(photo.getRawUrl()), null, null);
                         } catch (MalformedURLException e) {
                             e.printStackTrace();
                         }
@@ -492,34 +494,38 @@ public class HomeActivity extends AppCompatActivity {
 
     public void loadMoreByPage(int page) {
         loading = false;
-        Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f", "mobile wallpaper", page, 80).enqueue(new Callback<PixelsResponse>() {
+        //Constants.getApiService().getHome2("563492ad6f917000010000010676d489db5b43738c2e002114eaa93f", "mobile wallpaper", page, 80).enqueue(new Callback<PixelsResponse>() {
+        Constants.getApiService().getHome2("https://foxytool.com/getWallpapers", page).enqueue(new Callback<List<WallpaperResponseDto>>() {
             @Override
-            public void onResponse(Call<PixelsResponse> call, Response<PixelsResponse> response) {
-                if (pixelsResponse.getPhotos() == null) {
-                    pixelsResponse.setPhotos(response.body().getPhotos());
-                } else {
-                    pixelsResponse.getPhotos().addAll(response.body().getPhotos());
+            public void onResponse(Call<List<WallpaperResponseDto>> call, Response<List<WallpaperResponseDto>> response) {
+//                if (pixelsResponse.getPhotos() == null) {
+//                    pixelsResponse.setPhotos(response.body().getPhotos());
+//                } else {
+//                    pixelsResponse.getPhotos().addAll(response.body().getPhotos());
+//                }
+                if(response.isSuccessful()){
+                    pixelsResponse.addAll(response.body());
                 }
                 adapterNew.notifyDataSetChanged();
-                List<Photo> photos = new ArrayList<>();
-                for (int i = 0; i < response.body().getPhotos().size(); i++) {
-                    Photo photo = new Photo();
-                    photo.setLink(response.body().getPhotos().get(i).getSrc().getOriginal());
-                    photos.add(photo);
-                }
-                Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        AppDatabase.getInstance(HomeActivity.this).daoWallpapers().insert(photos);
-                        Log.e("size", AppDatabase.getInstance(HomeActivity.this).daoWallpapers().getPhotos().size() + "");
-                    }
-                });
-                Constants.getSharedPreferences(HomeActivity.this).setResponse(response.body());
+//                List<Photo> photos = new ArrayList<>();
+//                for (int i = 0; i < response.body().getPhotos().size(); i++) {
+//                    Photo photo = new Photo();
+//                    photo.setLink(response.body().getPhotos().get(i).getSrc().getOriginal());
+//                    photos.add(photo);
+//                }
+//                Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        AppDatabase.getInstance(HomeActivity.this).daoWallpapers().insert(photos);
+//                        Log.e("size", AppDatabase.getInstance(HomeActivity.this).daoWallpapers().getPhotos().size() + "");
+//                    }
+//                });
+                //Constants.getSharedPreferences(HomeActivity.this).setResponse(response.body());
                 loading = true;
             }
 
             @Override
-            public void onFailure(Call<PixelsResponse> call, Throwable t) {
+            public void onFailure(Call<List<WallpaperResponseDto>> call, Throwable t) {
                 loading = true;
             }
         });
